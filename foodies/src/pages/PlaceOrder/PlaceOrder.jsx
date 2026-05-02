@@ -7,7 +7,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { RAZORPAY_KEY } from '../../util/contants';
 import { useNavigate } from 'react-router-dom';
-// import Razorpay from "razorpay";
+import BASE_URL from '../../config';
 
 const PlaceOrder = () => {
   const { foodList, quantities, setQuantities, token } = useContext(StoreContext);
@@ -50,9 +50,8 @@ const PlaceOrder = () => {
     };
 
     try {
-      const reponse = await axios.post('http://localhost:8080/api/orders/create', orderData, {headers: {'Authorization': `Bearer ${token}`}});
+      const response = await axios.post(`${BASE_URL}/api/orders/create`, orderData, {headers: {'Authorization': `Bearer ${token}`}});
       if (response.status === 201 && response.data.razorpayOrderId) {
-        //initiate the payment
         initiateRazorpayPayment(response.data);
       } else {
         toast.error("Unable to place order. Please try again.");
@@ -63,9 +62,9 @@ const PlaceOrder = () => {
   };
 
   const initiateRazorpayPayment = (order) => {
-    const options  = {
+    const options = {
       key: RAZORPAY_KEY,
-      amount: order.amount, //Convert to paise
+      amount: order.amount,
       currency: "INR",
       name: "Food Land",
       description: "Food order payment",
@@ -97,15 +96,15 @@ const PlaceOrder = () => {
       razorpay_signature: razorpayResponse.razorpay_signature
     };
     try {
-      const response = await axios.post('http://localhost:8080/api/orders/verify', paymentData, {headers: {'Authorization': `Bearer ${token}`}});
-    if (response.status === 200) {
-      toast.success('Payment successfull.');
-      await clearCart();
-      navigate('/myorders');
-    } else {
-      toast.error('Payment failed. Please try again.');
-      navigate('/');
-    }
+      const response = await axios.post(`${BASE_URL}/api/orders/verify`, paymentData, {headers: {'Authorization': `Bearer ${token}`}});
+      if (response.status === 200) {
+        toast.success('Payment successfull.');
+        await clearCart();
+        navigate('/myorders');
+      } else {
+        toast.error('Payment failed. Please try again.');
+        navigate('/');
+      }
     } catch (error) {
       toast.error('Payment failed. Please try again.');
     }
@@ -113,7 +112,7 @@ const PlaceOrder = () => {
 
   const deleteOrder = async (orderId) => {
     try {
-      await axios.delete('http://localhost:8080/api/orders/'+orderId, {headers: {'Authorization': `Bearer ${token}`}});
+      await axios.delete(`${BASE_URL}/api/orders/`+orderId, {headers: {'Authorization': `Bearer ${token}`}});
     } catch (error) {
       toast.error('Something went wrong. Contact support.');
     }
@@ -121,18 +120,16 @@ const PlaceOrder = () => {
 
   const clearCart = async () => {
     try {
-      await axios.delete("http://localhost:8080/api/cart", {headers: {'Authorization': `Bearer ${token}`}});
+      await axios.delete(`${BASE_URL}/api/cart`, {headers: {'Authorization': `Bearer ${token}`}});
       setQuantities({});
     } catch (error) {
       toast.error('Error while clearing the cart.');
     }
   }
 
-  //cart items
-    const cartItems = foodList.filter(food => quantities[food.id] > 0);
+  const cartItems = foodList.filter(food => quantities[food.id] > 0);
+  const {subtotal, shipping, tax, total} = calculateCartTotals(cartItems, quantities);
 
-    //calculation
-    const {subtotal, shipping, tax, total} = calculateCartTotals(cartItems, quantities);
   return (
     <div className="container mt-4">
         <main>
@@ -156,25 +153,18 @@ const PlaceOrder = () => {
                 </li>
                 ))}
                 <li className="list-group-item d-flex justify-content-between">
-                  <div>
-                    
-                    <span>Shipping</span>
-                  </div>
+                  <div><span>Shipping</span></div>
                   <span className="text-body-secondary">&#8377;{subtotal === 0? 0.0 : shipping.toFixed(2)}</span>
                 </li>
                 <li className="list-group-item d-flex justify-content-between">
-                  <div>
-                    <span>Tax (10%)</span>
-                  </div>
+                  <div><span>Tax (10%)</span></div>
                   <span className="text-body-secondary">&#8377;{tax.toFixed(2)}</span>
                 </li>
-                
                 <li className="list-group-item d-flex justify-content-between">
                   <span>Total (INR)</span>
                   <strong>&#8377;{total.toFixed(2)}</strong>
                 </li>
               </ul>
-              
             </div>
             <div className="col-md-7 col-lg-8">
               <h4 className="mb-3">Billing address</h4>
@@ -182,75 +172,26 @@ const PlaceOrder = () => {
                 <div className="row g-3">
                   <div className="col-sm-6">
                     <label htmlFor="firstName" className="form-label">First name</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="firstName"
-                      placeholder="Vijay"
-                      required
-                      name="firstName"
-                      onChange={onChangeHandler}
-                      value={data.firstName}
-                    />
-                 
+                    <input type="text" className="form-control" id="firstName" placeholder="Vijay" required name="firstName" onChange={onChangeHandler} value={data.firstName}/>
                   </div>
                   <div className="col-sm-6">
                     <label htmlFor="lastName" className="form-label">Last name</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="lastName"
-                      placeholder="Joseph"
-                      value={data.lastName}
-                      onChange={onChangeHandler}
-                      name="lastName"
-                      required
-                    />
-                    
+                    <input type="text" className="form-control" id="lastName" placeholder="Joseph" value={data.lastName} onChange={onChangeHandler} name="lastName" required/>
                   </div>
                   <div className="col-12">
                     <label htmlFor="email" className="form-label">Email</label>
                     <div className="input-group has-validation">
                       <span className="input-group-text">@</span>
-                      <input
-                        type="email"
-                        className="form-control"
-                        id="email"
-                        placeholder="Email"
-                        required
-                        name="email"
-                        onChange={onChangeHandler}
-                        value={data.email}
-                      />
-                      
+                      <input type="email" className="form-control" id="email" placeholder="Email" required name="email" onChange={onChangeHandler} value={data.email}/>
                     </div>
                   </div>
                   <div className="col-12">
                     <label htmlFor="phone" className="form-label">Phone Number</label>
-                    <input
-                      type="number"
-                      className="form-control"
-                      id="phone"
-                      placeholder="9876543210"
-                      required
-                      value={data.phoneNumber}
-                      name="phoneNumber"
-                      onChange={onChangeHandler}
-                    />
-                    </div>
+                    <input type="number" className="form-control" id="phone" placeholder="9876543210" required value={data.phoneNumber} name="phoneNumber" onChange={onChangeHandler}/>
+                  </div>
                   <div className="col-12">
                     <label htmlFor="address" className="form-label">Address</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="address"
-                      placeholder="1234 Main St"
-                      required
-                      value={data.address}
-                      name="address"
-                      onChange={onChangeHandler}
-                    />
-                    
+                    <input type="text" className="form-control" id="address" placeholder="1234 Main St" required value={data.address} name="address" onChange={onChangeHandler}/>
                   </div>
                   <div className="col-md-5">
                     <label htmlFor="state" className="form-label">State</label>
@@ -258,7 +199,6 @@ const PlaceOrder = () => {
                       <option value="">Choose...</option>
                       <option>Tamilnadu</option>
                     </select>
-                    
                   </div>
                   <div className="col-md-4">
                     <label htmlFor="city" className="form-label">City</label>
@@ -266,25 +206,13 @@ const PlaceOrder = () => {
                       <option value="">Choose...</option>
                       <option>Chennai</option>
                     </select>
-                    
                   </div>
                   <div className="col-md-3">
                     <label htmlFor="zip" className="form-label">Zip</label>
-                    <input
-                      type="number"
-                      className="form-control"
-                      id="zip"
-                      placeholder="98765"
-                      required
-                      name="zip"
-                      value={data.zip}
-                      onChange={onChangeHandler}
-                    />
-                    
+                    <input type="number" className="form-control" id="zip" placeholder="98765" required name="zip" value={data.zip} onChange={onChangeHandler}/>
                   </div>
                 </div>
-                
-               <hr className="my-4" />
+                <hr className="my-4" />
                 <button className="w-100 btn btn-primary btn-lg" type="submit" disabled={cartItems.length === 0}>
                   Continue to checkout
                 </button>

@@ -3,13 +3,14 @@ import {StoreContext} from '../../context/StoreContext'
 import axios from 'axios';
 import { assets } from '../../assets/assets';
 import './MyOrders.css';
+import BASE_URL from '../../config';
 
 const MyOrders = () => {
     const {token} = useContext(StoreContext);
     const [data, setData] = useState([]);
 
     const fetchOrders = async () => {
-        const response = await axios.get("http://localhost:8080/api/orders", {headers: {'Authorization': `Bearer ${token}`},
+        const response = await axios.get(`${BASE_URL}/api/orders`, {headers: {'Authorization': `Bearer ${token}`},
         });
         setData(response.data);
     };

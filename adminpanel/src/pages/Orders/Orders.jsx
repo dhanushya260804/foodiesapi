@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { assets } from '../../assets/assets';
+import BASE_URL from '../../../../foodies/src/config';
 
 const Orders = () => {
   const [data, setData] = useState([]);
 
   const fetchOrders = async () => {
     const token = localStorage.getItem("token");
-    const response = await axios.get("http://localhost:8080/api/orders/all", {
+    const response = await axios.get(`${BASE_URL}/api/orders/all`, {
         headers: { Authorization: `Bearer ${token}` }
     });
     setData(response.data);
@@ -16,7 +17,7 @@ const Orders = () => {
   const updateStatus = async (event, orderId) => {
     const token = localStorage.getItem("token");
     const response = await axios.patch(
-        `http://localhost:8080/api/orders/status/${orderId}?status=${event.target.value}`
+        `${BASE_URL}/api/orders/status/${orderId}?status=${event.target.value}`
     );
     if (response.status === 200) {
         await fetchOrders();

@@ -1,6 +1,7 @@
 import axios from "axios";
+import BASE_URL from '../config';
 
-const API_URL = 'http://localhost:8080/api/foods';
+const API_URL = `${BASE_URL}/api/foods`;
 
 export const fetchFoodList = async () => {
     try {
