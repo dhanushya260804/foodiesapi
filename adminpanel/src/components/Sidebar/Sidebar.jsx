@@ -4,7 +4,7 @@ import { assets } from '../../assets/assets';
 
 const Sidebar = ({sidebarVisible}) => {
   return (
-    <div className={`border-end bg-white ${sidebarVisible ? '': 'd-none'}`} id="sidebar-wrapper">
+    <div className={`border-end bg-white ${sidebarVisible ? 'sb-sidenav-toggled' : ''}`} id="sidebar-wrapper">
         <div className="sidebar-heading border-bottom bg-light">
             <img src={assets.logo} alt="" height={48} width={48}/>
         </div>

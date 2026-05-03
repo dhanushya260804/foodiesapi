@@ -8,11 +8,12 @@ import Menubar from './components/Menubar/Menubar';
 import { ToastContainer } from 'react-toastify';
 
 const App = () => {
-  const [sidebarVisible, setSidebarVisible] = useState(window.innerWidth >= 992);
+  const [sidebarVisible, setSidebarVisible] = useState(false);
 
   const toggleSidebar = () => {
-    setSidebarVisible(!sidebarVisible);
-  }
+  setSidebarVisible(!sidebarVisible);
+  document.body.classList.toggle('sb-sidenav-toggled');
+}
   return (
     <div className="d-flex" id="wrapper">
             
