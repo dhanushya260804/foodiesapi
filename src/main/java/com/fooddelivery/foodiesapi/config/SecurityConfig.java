@@ -83,7 +83,8 @@ public class SecurityConfig {
                 "http://localhost:5173",
                 "http://localhost:5174",
                 "https://online-food-delivery-app-beta.vercel.app",
-                "https://online-food-delivery-kxyd9vyve-dhanushya260804s-projects.vercel.app"
+                "https://online-food-delivery-kxyd9vyve-dhanushya260804s-projects.vercel.app",
+                "https://online-food-delivery-app-sb2.vercel.app"
         ));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
