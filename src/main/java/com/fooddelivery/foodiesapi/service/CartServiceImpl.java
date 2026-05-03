@@ -13,17 +13,31 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class CartServiceImpl implements CartService{
+public class CartServiceImpl implements CartService {
 
     private final CartRepository cartRepository;
     private final UserService userService;
+
     @Override
     public CartResponse addToCart(CartRequest request) {
         String loggedInUserId = userService.findByUserId();
         Optional<CartEntity> cartOptional = cartRepository.findByUserId(loggedInUserId);
-        CartEntity cart = cartOptional.orElseGet(() -> new CartEntity(loggedInUserId, new HashMap<>()));
+
+        CartEntity cart;
+        if (cartOptional.isPresent()) {
+            cart = cartOptional.get();
+        } else {
+            cart = new CartEntity(loggedInUserId, new HashMap<String, Integer>());
+        }
+
         Map<String, Integer> cartItems = cart.getItems();
-        cartItems.put(request.getFoodId(), cartItems.getOrDefault(request.getFoodId(), 0) + 1);
+
+        int currentQty = 0;
+        if (cartItems.containsKey(request.getFoodId())) {
+            currentQty = cartItems.get(request.getFoodId());
+        }
+        cartItems.put(request.getFoodId(), currentQty + 1);
+
         cart.setItems(cartItems);
         cart = cartRepository.save(cart);
         return convertToResponse(cart);
@@ -32,8 +46,15 @@ public class CartServiceImpl implements CartService{
     @Override
     public CartResponse getCart() {
         String loggedInUserId = userService.findByUserId();
-        CartEntity entity = cartRepository.findByUserId(loggedInUserId)
-                .orElse(new CartEntity(null, loggedInUserId, new HashMap<>()));
+        Optional<CartEntity> cartOptional = cartRepository.findByUserId(loggedInUserId);
+
+        CartEntity entity;
+        if (cartOptional.isPresent()) {
+            entity = cartOptional.get();
+        } else {
+            entity = new CartEntity(null, loggedInUserId, new HashMap<String, Integer>());
+        }
+
         return convertToResponse(entity);
     }
 
@@ -46,9 +67,15 @@ public class CartServiceImpl implements CartService{
     @Override
     public CartResponse removeFromCart(CartRequest cartRequest) {
         String loggedInUserId = userService.findByUserId();
-        CartEntity entity = cartRepository.findByUserId(loggedInUserId)
-                .orElseThrow(() -> new RuntimeException("Cart is not found"));
+        Optional<CartEntity> cartOptional = cartRepository.findByUserId(loggedInUserId);
+
+        if (!cartOptional.isPresent()) {
+            throw new RuntimeException("Cart is not found");
+        }
+
+        CartEntity entity = cartOptional.get();
         Map<String, Integer> cartItems = entity.getItems();
+
         if (cartItems.containsKey(cartRequest.getFoodId())) {
             int currentQty = cartItems.get(cartRequest.getFoodId());
             if (currentQty > 0) {
@@ -57,8 +84,8 @@ public class CartServiceImpl implements CartService{
                 cartItems.remove(cartRequest.getFoodId());
             }
             entity = cartRepository.save(entity);
-
         }
+
         return convertToResponse(entity);
     }
 

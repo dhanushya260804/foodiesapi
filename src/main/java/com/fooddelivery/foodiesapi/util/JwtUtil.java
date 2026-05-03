@@ -11,10 +11,10 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 @Component
 public class JwtUtil {
@@ -27,12 +27,15 @@ public class JwtUtil {
     }
 
     public String generateToken(UserDetails userDetails) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("role", userDetails.getAuthorities()
-                .stream()
-                .findFirst()
-                .map(GrantedAuthority::getAuthority)
-                .orElse("ROLE_USER"));
+        Map<String, Object> claims = new HashMap<String, Object>();
+
+        String role = "ROLE_USER";
+        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+        if (authorities != null && !authorities.isEmpty()) {
+            role = authorities.iterator().next().getAuthority();
+        }
+        claims.put("role", role);
+
         return createToken(claims, userDetails.getUsername());
     }
 
@@ -47,18 +50,11 @@ public class JwtUtil {
     }
 
     public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
+        return extractAllClaims(token).getSubject();
     }
 
     public Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
-    }
-
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
-
-
-        return claimsResolver.apply(claims);
+        return extractAllClaims(token).getExpiration();
     }
 
     private Claims extractAllClaims(String token) {

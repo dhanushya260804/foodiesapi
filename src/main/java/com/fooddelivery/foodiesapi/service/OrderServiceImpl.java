@@ -8,18 +8,18 @@ import com.fooddelivery.foodiesapi.repository.OrderRepository;
 import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
-import lombok.AllArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
-public class OrderServiceImpl implements OrderService{
+public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderRepository orderRepository;
@@ -38,8 +38,7 @@ public class OrderServiceImpl implements OrderService{
         OrderEntity newOrder = convertToEntity(request);
         newOrder = orderRepository.save(newOrder);
 
-
-        //create razorpay payment order
+        // Create Razorpay payment order
         RazorpayClient razorpayClient = new RazorpayClient(RAZORPAY_KEY, RAZORPAY_SECRET);
         JSONObject orderRequest = new JSONObject();
         orderRequest.put("amount", newOrder.getAmount() * 100);
@@ -48,6 +47,7 @@ public class OrderServiceImpl implements OrderService{
 
         Order razorpayOrder = razorpayClient.orders.create(orderRequest);
         newOrder.setRazorpayOrderId(razorpayOrder.get("id"));
+
         String loggedInUserId = userService.findByUserId();
         newOrder.setUserId(loggedInUserId);
         newOrder = orderRepository.save(newOrder);
@@ -57,13 +57,19 @@ public class OrderServiceImpl implements OrderService{
     @Override
     public void verifyPayment(Map<String, String> paymentData, String status) {
         String razorpayOrderId = paymentData.get("razorpay_order_id");
-        OrderEntity existingOrder = orderRepository.findByRazorpayOrderId(razorpayOrderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        Optional<OrderEntity> orderOptional = orderRepository.findByRazorpayOrderId(razorpayOrderId);
+        if (!orderOptional.isPresent()) {
+            throw new RuntimeException("Order not found");
+        }
+
+        OrderEntity existingOrder = orderOptional.get();
         existingOrder.setPaymentStatus(status);
         existingOrder.setRazorpaySignature(paymentData.get("razorpay_signature"));
         existingOrder.setRazorpayPaymentId(paymentData.get("razorpay_payment_id"));
         orderRepository.save(existingOrder);
-        if ("paid".equalsIgnoreCase("status")) {
+
+        if ("paid".equalsIgnoreCase(status)) {   // ⚠️ also fixed bug: was comparing "status" string literal instead of the variable
             cartRepository.deleteByUserId(existingOrder.getUserId());
         }
     }
@@ -72,7 +78,11 @@ public class OrderServiceImpl implements OrderService{
     public List<OrderResponse> getUserOrders() {
         String loggedInUserId = userService.findByUserId();
         List<OrderEntity> list = orderRepository.findByUserId(loggedInUserId);
-        return list.stream().map(entity -> convertToResponse(entity)).collect(Collectors.toList());
+        List<OrderResponse> responses = new ArrayList<OrderResponse>();
+        for (OrderEntity entity : list) {
+            responses.add(convertToResponse(entity));
+        }
+        return responses;
     }
 
     @Override
@@ -82,14 +92,21 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     public List<OrderResponse> getOrdersOfAllUsers() {
-      List<OrderEntity> list = orderRepository.findAll();
-      return list.stream().map(entity -> convertToResponse(entity)).collect(Collectors.toList());
+        List<OrderEntity> list = orderRepository.findAll();
+        List<OrderResponse> responses = new ArrayList<OrderResponse>();
+        for (OrderEntity entity : list) {
+            responses.add(convertToResponse(entity));
+        }
+        return responses;
     }
 
     @Override
     public void updateOrderStatus(String orderId, String status) {
-        OrderEntity entity = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+        Optional<OrderEntity> orderOptional = orderRepository.findById(orderId);
+        if (!orderOptional.isPresent()) {
+            throw new RuntimeException("Order not found");
+        }
+        OrderEntity entity = orderOptional.get();
         entity.setOrderStatus(status);
         orderRepository.save(entity);
     }
