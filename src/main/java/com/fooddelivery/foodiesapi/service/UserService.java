@@ -4,8 +4,8 @@ import com.fooddelivery.foodiesapi.io.UserRequest;
 import com.fooddelivery.foodiesapi.io.UserResponse;
 
 public interface UserService {
-
     UserResponse registerUser(UserRequest request);
-
     String findByUserId();
+    UserResponse getProfile();
+    UserResponse updateProfile(UserRequest request);
 }

@@ -7,18 +7,22 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "foods")
-public class FoodEntity {
+@Document(collection = "messages")
+public class MessageEntity {
     @Id
     private String id;
     private String name;
-    private String description;
-    private String imageUrl;
-    private double price;
-    private String category;
-    private boolean veg;
+    private String email;
+    private String message;
+    private String status; // "unread", "read", "replied"
+    private LocalDateTime createdAt;
+    private List<ReplyEntity> replies = new ArrayList<>();
 }

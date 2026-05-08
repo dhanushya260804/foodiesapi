@@ -1,19 +1,14 @@
 package com.fooddelivery.foodiesapi.io;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class UserRequest {
-
+public class MessageRequest {
     private String name;
     private String email;
-    private String password;
-    public String PhoneNumber;
-    public String address;
+    private String message;
 }

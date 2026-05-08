@@ -20,4 +20,14 @@ public class UserController {
     public UserResponse register(@RequestBody UserRequest request) {
         return userService.registerUser(request);
     }
+
+    @GetMapping("/users/profile")
+    public UserResponse getProfile() {
+        return userService.getProfile();
+    }
+
+    @PutMapping("/users/profile")
+    public UserResponse updateProfile(@RequestBody UserRequest request) {
+        return userService.updateProfile(request);
+    }
 }

@@ -3,6 +3,7 @@ package com.fooddelivery.foodiesapi.io;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -19,4 +20,5 @@ public class OrderResponse {
     private String razorpayOrderId;
     private String orderStatus;
     private List<OrderItem> orderedItems;
+    private LocalDateTime createdAt;
 }

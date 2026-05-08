@@ -7,11 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class FoodRequest {
-
-    private String name;
-    private String description;
-    private double price;
-    private String category;
-    private boolean veg;
+public class ReviewRequest {
+    private String foodId;
+    private int rating;
+    private String comment;
 }

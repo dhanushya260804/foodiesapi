@@ -1,19 +1,36 @@
 import React, { useState } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 import AddFood from './pages/AddFood/AddFood';
 import ListFood from './pages/ListFood/ListFood';
 import Orders from './pages/Orders/Orders';
 import Sidebar from './components/Sidebar/Sidebar';
 import Menubar from './components/Menubar/Menubar';
+import Login from './pages/Login/Login';
 import { ToastContainer } from 'react-toastify';
+import Home from './pages/Home/Home';
+import Reviews from '../../foodies/src/pages/Reviews/Reviews';
+import Messages from './pages/Messages/Messages';
 
 const App = () => {
   const [sidebarVisible, setSidebarVisible] = useState(false);
+  const [token, setToken] = useState(localStorage.getItem("token") || "");
 
   const toggleSidebar = () => {
   setSidebarVisible(!sidebarVisible);
   document.body.classList.toggle('sb-sidenav-toggled');
 }
+
+if (!token) {
+  return (
+    <>
+    <ToastContainer />
+    <Routes>
+      <Route path='*' element={<Login setToken={setToken} />} />
+    </Routes>
+    </>
+  );
+}
+
   return (
     <div className="d-flex" id="wrapper">
             
@@ -21,7 +38,7 @@ const App = () => {
             
             <div id="page-content-wrapper">
                 
-                <Menubar toggleSidebar={toggleSidebar} />
+                <Menubar toggleSidebar={toggleSidebar} setToken={setToken} />
                 <ToastContainer />
                 
                 <div className="container-fluid">
@@ -29,7 +46,9 @@ const App = () => {
                       <Route path='/add' element={<AddFood />} />
                       <Route path='/list' element={<ListFood />} />
                       <Route path='/orders' element={<Orders />} />
-                      <Route path='/' element={<ListFood />} />
+                      <Route path='/' element={<Home />} />
+                      <Route path='/reviews' element={<Reviews />} />
+                      <Route path='/messages' element={<Messages />} />
                     </Routes>
                 </div>
             </div>

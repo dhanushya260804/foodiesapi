@@ -38,6 +38,26 @@ public class UserServiceImpl implements UserService {
         return userOptional.get().getId();
     }
 
+    @Override
+    public UserResponse getProfile() {
+        String email = authenticationFacade.getAuthentication().getName();
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return convertToResponse(user);
+    }
+
+    @Override
+    public UserResponse updateProfile(UserRequest request) {
+        String email = authenticationFacade.getAuthentication().getName();
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        user.setName(request.getName());
+        user.setPhoneNumber(request.getPhoneNumber());
+        user.setAddress(request.getAddress());
+        user = userRepository.save(user);
+        return convertToResponse(user);
+    }
+
     private UserEntity convertToEntity(UserRequest request) {
         return UserEntity.builder()
                 .email(request.getEmail())
@@ -51,6 +71,8 @@ public class UserServiceImpl implements UserService {
                 .id(registeredUser.getId())
                 .name(registeredUser.getName())
                 .email(registeredUser.getEmail())
+                .phoneNumber(registeredUser.getPhoneNumber())
+                .address(registeredUser.getAddress())
                 .build();
     }
 }

@@ -1,0 +1,43 @@
+.stat-card {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    border-radius: 12px;
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    opacity: 0.9;
+}
+
+.stat-info h3 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.stat-info p {
+    margin: 0;
+    font-size: 1rem;
+    opacity: 0.85;
+}
+
+.card-orders {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.card-foods {
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+}
+
+.card-revenue {
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+}

@@ -1,14 +1,14 @@
 import axios from "axios";
 
-const API_URL = 'https://online-food-delivery-app-93pb.onrender.com/api/foods';
+const API_URL = 'http://localhost:8080/api/foods';
 
 export const addFood = async (foodData, image) => {
     const formData = new FormData();
     formData.append('food', JSON.stringify(foodData));
     formData.append('file', image);
-
+    const token = localStorage.getItem('token');
     try {
-        await axios.post(API_URL, formData, {headers: {"Content-Type": "multipart/form-data"}});
+        await axios.post(API_URL, formData, {headers: {"Content-Type": "multipart/form-data", "Authorization": `Bearer ${token}`}});
        } catch (error) {
          console.log('Error', error);
          throw error;

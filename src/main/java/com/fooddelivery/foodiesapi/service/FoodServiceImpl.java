@@ -114,6 +114,7 @@ public class FoodServiceImpl implements FoodService {
                 .description(request.getDescription())
                 .category(request.getCategory())
                 .price(request.getPrice())
+                .veg(request.isVeg())
                 .build();
     }
 
@@ -124,6 +125,7 @@ public class FoodServiceImpl implements FoodService {
                 .description(entity.getDescription())
                 .category(entity.getCategory())
                 .price(entity.getPrice())
+                .veg(entity.isVeg())
                 .imageUrl(entity.getImageUrl())
                 .build();
     }

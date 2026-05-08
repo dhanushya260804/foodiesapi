@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { assets } from '../../assets/assets';
-import axios from 'axios';
 import { addFood } from '../../services/foodService';
 import { toast } from 'react-toastify';
 
@@ -10,12 +9,13 @@ const AddFood = () => {
       name:'',
       description:'',
       price:'',
-      category:'Briyani'
+      category:'Biryani',
+      veg: false
   });
 
   const onChangeHandler = (event) => {
       const name = event.target.name;
-      const value = event.target.value;
+      const value = event.target.name === 'veg' ? event.target.value === 'true' : event.target.value;
       setData(data => ({...data, [name]: value}));
   }
 
@@ -28,7 +28,7 @@ const AddFood = () => {
     try {
        await addFood(data, image);
        toast.success('Food added successfully!');
-       setData({name: '', description: '', category: 'Briyani', price: ''});
+       setData({name: '', description: '', category: 'Briyani', price: '', veg: false});
        setImage(null);
    } catch (error) {
         toast.error('Error adding food.');
@@ -65,9 +65,30 @@ const AddFood = () => {
                 <option value="Rolls">Rolls</option>
                 <option value="Salad">Salad</option>
                 <option value="Shawarma">Shawarma</option>
+                <option value="Pizza">Pizza</option>
                 <option value="Desserts">Desserts</option>
             </select>
           </div>
+
+          <div className="mb-3">
+            <label className="form-label">Type</label>
+            < div className="d-flex gap-3">
+            <div className="form-check">
+              <input className="form-check-input" type="radio" name="veg" id="veg" value="true" onChange={onChangeHandler} required />
+              <label className="form-check-label text-success fw-bold" htmlFor="veg">
+                🟢 Veg
+                </label> 
+            </div>
+            <div className="form-check">
+            <input className="form-check-input" type="radio" name="veg" id="nonveg"
+                value="false" onChange={onChangeHandler} required />
+            <label className="form-check-label text-danger fw-bold" htmlFor="nonveg">
+                🔴 Non-Veg
+            </label>
+            </div>
+          </div>
+          </div>
+
           <div className="mb-3">
             <label htmlFor="price" className="form-label">Price</label>
             <input type="number" name="price" id="price" placeholder='&#8377;200' className='form-control' onChange={onChangeHandler} value={data.price}/>
