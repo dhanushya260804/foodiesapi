@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { StoreContext } from '../../context/StoreContext';
 
-const FoodItem = ({name, description, id, imageURL, price}) => {
+const FoodItem = ({name, description, id, imageURL, price, veg}) => {
     const {increaseQty, decreaseQty, quantities} = useContext(StoreContext);
   return (
     <div className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4 d-flex justify-content-center">
@@ -11,6 +11,11 @@ const FoodItem = ({name, description, id, imageURL, price}) => {
                            <img src={imageURL} className="card-img-top" alt="Product Image" height={300} width={60} />
                         </Link>
                         <div className="card-body">
+                            <div className="mb-1">
+                                <span className={`badge ${veg ? 'bg-success' : 'bg-danger'}`}>
+                                    {veg ? '🟢 Veg' : '🔴 Non-Veg'}
+                                </span>
+                            </div>
                             <h5 className="card-title">{name}</h5>
                             <p className="card-text">{description}</p>
                             <div className="d-flex justify-content-between align-items-center">
@@ -20,7 +25,7 @@ const FoodItem = ({name, description, id, imageURL, price}) => {
                                     <i className="bi bi-star-fill text-warning"></i>
                                     <i className="bi bi-star-fill text-warning"></i>
                                     <i className="bi bi-star-fill text-warning"></i>
-                                    <i className="bi bi-star-half text-warning"></i> 
+                                    <i className="bi bi-star-half text-warning"></i>
                                     <small className="text-muted">(4.5)</small>
                                 </div>
                             </div>

@@ -1,6 +1,8 @@
 import React, { useState, useRef } from 'react';
 import emailjs from '@emailjs/browser';
+import axios from 'axios';
 import './Contact.css';
+import BASE_URL from '../../config';
 
 const Contact = () => {
   const formRef = useRef();
@@ -12,35 +14,51 @@ const Contact = () => {
     message: '',
   });
 
-  const [status, setStatus] = useState('idle'); // idle | sending | success | error
+  const [status, setStatus] = useState('idle');
+  const [replies, setReplies] = useState([]);
+  const [checkedReplies, setCheckedReplies] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const checkReplies = async () => {
+    if (!formData.email) return;
+    try {
+      const response = await axios.get(`${BASE_URL}/api/messages/my?email=${formData.email}`);
+      setReplies(response.data);
+      setCheckedReplies(true);
+    } catch (error) {
+      console.log('Error fetching replies', error);
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus('sending');
 
-    emailjs.sendForm(
-      'service_wyfyhaf',     // your service ID
-      'template_tip06nh',    // your template ID
-      formRef.current,
-      'IfrSs8UmJznTSS7cD'    // your public key
-    )
-    .then(() => {
-      setStatus('success');
-      setFormData({
-        firstName: '',
-        lastName: '',
-        email: '',
-        message: '',
+    try {
+      // Save to database
+      await axios.post(`${BASE_URL}/api/messages`, {
+        name: `${formData.firstName} ${formData.lastName}`,
+        email: formData.email,
+        message: formData.message
       });
-    })
-    .catch((error) => {
-      console.error("EmailJS Error:", error);
+
+      // Send via EmailJS
+      await emailjs.sendForm(
+        'service_wyfyhaf',
+        'template_tip06nh',
+        formRef.current,
+        'IfrSs8UmJznTSS7cD'
+      );
+
+      setStatus('success');
+      setFormData({ firstName: '', lastName: '', email: '', message: '' });
+    } catch (error) {
+      console.error("Error:", error);
       setStatus('error');
-    });
+    }
   };
 
   return (
@@ -69,7 +87,6 @@ const Contact = () => {
                 <div className="contact-detail-value">Chennai, Tamil Nadu</div>
               </div>
             </div>
-
             <div className="contact-detail-item">
               <div className="contact-icon">📧</div>
               <div>
@@ -77,7 +94,6 @@ const Contact = () => {
                 <div className="contact-detail-value">support@foodies.com</div>
               </div>
             </div>
-
             <div className="contact-detail-item">
               <div className="contact-icon">⏰</div>
               <div>
@@ -85,6 +101,39 @@ const Contact = () => {
                 <div className="contact-detail-value">Within 24 hours</div>
               </div>
             </div>
+          </div>
+
+          {/* Check Replies Section */}
+          <div className="mt-4 p-3 bg-white rounded shadow-sm">
+            <h5 className="fw-bold mb-2">📬 Check Admin Replies</h5>
+            <div className="d-flex gap-2">
+              <input type="email" className="form-control form-control-sm"
+                placeholder="Enter your email" value={formData.email}
+                onChange={(e) => setFormData({...formData, email: e.target.value})} />
+              <button className="btn btn-sm btn-primary" onClick={checkReplies}>Check</button>
+            </div>
+            {checkedReplies && (
+              <div className="mt-3">
+                {replies.length > 0 ? replies.map((msg, index) => (
+                  <div key={index} className="card mb-2 p-2">
+                    <small className="text-muted">{new Date(msg.createdAt).toLocaleDateString()}</small>
+                    <p className="mb-1"><strong>You:</strong> {msg.message}</p>
+                    {msg.replies && msg.replies.length > 0 ? (
+                      msg.replies.map((reply, idx) => (
+                        <div key={idx} className="bg-light p-2 rounded mt-1">
+                          <small className="text-muted">Admin replied:</small>
+                          <p className="mb-0 text-primary">{reply.message}</p>
+                        </div>
+                      ))
+                    ) : (
+                      <small className="text-muted">No reply yet...</small>
+                    )}
+                  </div>
+                )) : (
+                  <p className="text-muted mt-2">No messages found for this email.</p>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
@@ -103,69 +152,33 @@ const Contact = () => {
             </div>
           ) : (
             <form ref={formRef} onSubmit={handleSubmit} className="contact-form">
-
-              {/* ✅ IMPORTANT FIX: Combined Name */}
-              <input
-                type="hidden"
-                name="name"
-                value={`${formData.firstName} ${formData.lastName}`}
-              />
-
-              {/* ✅ OPTIONAL FIX: Title (because template uses {{title}}) */}
-              <input
-                type="hidden"
-                name="title"
-                value="New Contact Message"
-              />
+              <input type="hidden" name="name" value={`${formData.firstName} ${formData.lastName}`} />
+              <input type="hidden" name="title" value="New Contact Message" />
 
               <div className="form-row">
                 <div className="form-group">
                   <label>First Name</label>
-                  <input
-                    type="text"
-                    name="firstName"
-                    value={formData.firstName}
-                    onChange={handleChange}
-                    placeholder="Dhanushya"
-                    required
-                  />
+                  <input type="text" name="firstName" value={formData.firstName}
+                    onChange={handleChange} placeholder="Dhanushya" required />
                 </div>
-
                 <div className="form-group">
                   <label>Last Name</label>
-                  <input
-                    type="text"
-                    name="lastName"
-                    value={formData.lastName}
-                    onChange={handleChange}
-                    placeholder="T"
-                    required
-                  />
+                  <input type="text" name="lastName" value={formData.lastName}
+                    onChange={handleChange} placeholder="T" required />
                 </div>
               </div>
 
               <div className="form-group">
                 <label>Email Address</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="you@example.com"
-                  required
-                />
+                <input type="email" name="email" value={formData.email}
+                  onChange={handleChange} placeholder="you@example.com" required />
               </div>
 
               <div className="form-group">
                 <label>Message</label>
-                <textarea
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  rows="5"
-                  placeholder="Tell us what's on your mind..."
-                  required
-                />
+                <textarea name="message" value={formData.message}
+                  onChange={handleChange} rows="5"
+                  placeholder="Tell us what's on your mind..." required />
               </div>
 
               {status === 'error' && (
@@ -174,20 +187,12 @@ const Contact = () => {
                 </div>
               )}
 
-              <button
-                type="submit"
-                className="btn-send"
-                disabled={status === 'sending'}
-              >
-                {status === 'sending'
-                  ? 'Sending...'
-                  : 'Send Message'}
+              <button type="submit" className="btn-send" disabled={status === 'sending'}>
+                {status === 'sending' ? 'Sending...' : 'Send Message'}
               </button>
-
             </form>
           )}
         </div>
-
       </div>
     </section>
   );

@@ -2,6 +2,7 @@ import axios from "axios";
 import { createContext, useEffect, useState } from "react";
 import { fetchFoodList } from "../service/foodService";
 import { addToCart, getCartData, removeQtyFromCart } from "../service/cartService";
+import BASE_URL from "../config";
 
 export const StoreContext = createContext(null);
 
@@ -9,6 +10,7 @@ export const StoreContextProvider = (props) => {
     const [foodList, setFoodList] = useState([]);
     const [quantities, setQuantities] = useState({});
     const [token, setToken] = useState(localStorage.getItem("token") || "");
+    const [userName, setUserName] = useState('');
 
     const increaseQty = async (foodId) => {
         setQuantities((prev) => ({...prev, [foodId]: (prev[foodId] || 0)+1}));
@@ -32,6 +34,17 @@ export const StoreContextProvider = (props) => {
        const items = await getCartData(token);
         setQuantities(items || {} );
     };
+
+    const fetchUserProfile = async (token) => {
+        try {
+            const response = await axios.get(`${BASE_URL}/api/users/profile`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setUserName(response.data.name);
+        } catch (error) {
+            console.log('Error fetching profile', error);
+        }
+    };
  
     const contextValue = {
         foodList,
@@ -43,6 +56,8 @@ export const StoreContextProvider = (props) => {
         setToken,
         setQuantities,
         loadCartData,
+        userName,
+        setUserName,
     };
 
     useEffect(() => {
@@ -52,6 +67,7 @@ export const StoreContextProvider = (props) => {
             if (localStorage.getItem("token")) {
                 setToken(localStorage.getItem("token"));
                 await loadCartData(localStorage.getItem("token"));
+                await fetchUserProfile(localStorage.getItem("token"));
             }
         }
         loadData();

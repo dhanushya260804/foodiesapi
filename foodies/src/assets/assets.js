@@ -7,6 +7,7 @@ import Dosa from './Dosa.jpg';
 import Rolls from './Rolls.jpg';
 import Salad from './Salad.jpg';
 import Shawarma from './Shawarma.jpg';
+import Pizza from './Pizza.jpg';
 import Desserts from './Desserts.jpg';
 
 import profile from './profile.png';
@@ -43,6 +44,10 @@ export const categories = [
     {
         category: 'Shawarma',
         icon: Shawarma
+    },
+    {
+        category: 'Pizza',
+        icon: Pizza
     },
     {
         category: 'Desserts',

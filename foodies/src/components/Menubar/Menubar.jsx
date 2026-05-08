@@ -6,7 +6,7 @@ import { StoreContext } from '../../context/StoreContext';
 
 const Menubar = () => {
   const [active, setActive] = useState("home");
-  const {quantities, token, setToken, setQuantities} = useContext(StoreContext);
+  const {quantities, token, setToken, setQuantities, userName, setUserName } = useContext(StoreContext);
   const uniqueItemsInCart = Object.values(quantities).filter(qty => qty > 0).length;
   const navigate = useNavigate();
 
@@ -14,6 +14,7 @@ const Menubar = () => {
     localStorage.removeItem('token');
     setToken("");
     setQuantities({});
+    setUserName("");
     navigate("/");
   }
   return (
@@ -49,9 +50,12 @@ const Menubar = () => {
         <button className="btn btn-outline-success btn-sm" onClick={() => navigate('/register')}>Sign up</button>
           </> : <div className="dropdown text-end">
                 <a href="#" className="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                  <img src={assets.profile} alt="" width={32} height={32} className="rounded-circle" />
+                  <img src={assets.profile} alt="" width={32} height={32} className="rounded-circle me-1" />
+                  <span className="fw-bold">{userName}</span>
                 </a>
                 <ul className="dropdown-menu text-small">
+                  <li onClick={() => navigate('/profile')} className="dropdown-item" style={{cursor: 'pointer'}}>
+                    <i className="bi bi-person me-2"></i>Profile</li>
                   <li className="dropdown-item" onClick={() => navigate("/myorders")}>Orders</li>
                   <li className="dropdown-item" onClick={logout}>Logout</li>
                 </ul>

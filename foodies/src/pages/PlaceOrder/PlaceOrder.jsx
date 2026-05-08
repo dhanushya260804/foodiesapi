@@ -12,6 +12,7 @@ import BASE_URL from '../../config';
 const PlaceOrder = () => {
   const { foodList, quantities, setQuantities, token } = useContext(StoreContext);
   const navigate = useNavigate();
+  const [paymentMethod, setPaymentMethod] = useState('online');
 
   const [data, setData] = useState({
     firstName: '',
@@ -37,7 +38,7 @@ const PlaceOrder = () => {
       phoneNumber: data.phoneNumber,
       email: data.email,
       orderedItems: cartItems.map(item => ({
-        foodId: item.foodId,
+        foodId: item.id,
         quantity: quantities[item.id],
         price: item.price * quantities[item.id],
         category: item.category,
@@ -51,8 +52,19 @@ const PlaceOrder = () => {
 
     try {
       const response = await axios.post(`${BASE_URL}/api/orders/create`, orderData, {headers: {'Authorization': `Bearer ${token}`}});
-      if (response.status === 201 && response.data.razorpayOrderId) {
-        initiateRazorpayPayment(response.data);
+      if (response.status === 201) {
+        if (paymentMethod === 'cod') {
+          await axios.post(`${BASE_URL}/api/orders/verify`, {
+            razorpay_order_id: response.data.razorpayOrderId,
+            razorpay_payment_id: 'cod',
+            razorpay_signature: 'cod'
+          }, {headers: {'Authorization': `Bearer ${token}`}});
+          toast.success('Order placed successfully! Pay on delivery.');
+          await clearCart();
+          navigate('/myorders');
+        } else if (response.data.razorpayOrderId) {
+          initiateRazorpayPayment(response.data);
+        }
       } else {
         toast.error("Unable to place order. Please try again.");
       }
@@ -98,7 +110,7 @@ const PlaceOrder = () => {
     try {
       const response = await axios.post(`${BASE_URL}/api/orders/verify`, paymentData, {headers: {'Authorization': `Bearer ${token}`}});
       if (response.status === 200) {
-        toast.success('Payment successfull.');
+        toast.success('Payment successful.');
         await clearCart();
         navigate('/myorders');
       } else {
@@ -143,8 +155,8 @@ const PlaceOrder = () => {
                 <span className="badge bg-primary rounded-pill">{cartItems.length}</span>
               </h4>
               <ul className="list-group mb-3">
-                {cartItems.map(item => (
-                  <li className="list-group-item d-flex justify-content-between lh-sm">
+                {cartItems.map((item, index) => (
+                  <li key={index} className="list-group-item d-flex justify-content-between lh-sm">
                   <div>
                     <h6 className="my-0">{item.name}</h6>
                     <small className="text-body-secondary">Qty: {quantities[item.id]}</small>
@@ -213,8 +225,25 @@ const PlaceOrder = () => {
                   </div>
                 </div>
                 <hr className="my-4" />
+                <h4 className="mb-3">Payment Method</h4>
+                <div className="d-flex gap-4 mb-4">
+                  <div className="form-check">
+                    <input className="form-check-input" type="radio" name="payment" id="online"
+                      value="online" checked={paymentMethod === 'online'} onChange={(e) => setPaymentMethod(e.target.value)} />
+                    <label className="form-check-label" htmlFor="online">
+                      💳 Online Payment
+                    </label>
+                  </div>
+                  <div className="form-check">
+                    <input className="form-check-input" type="radio" name="payment" id="cod"
+                      value="cod" checked={paymentMethod === 'cod'} onChange={(e) => setPaymentMethod(e.target.value)} />
+                    <label className="form-check-label" htmlFor="cod">
+                      💵 Cash on Delivery
+                    </label>
+                  </div>
+                </div>
                 <button className="w-100 btn btn-primary btn-lg" type="submit" disabled={cartItems.length === 0}>
-                  Continue to checkout
+                  {paymentMethod === 'cod' ? 'Place Order' : 'Continue to checkout'}
                 </button>
               </form>
             </div>
