@@ -7,7 +7,7 @@ const Reviews = () => {
     const fetchReviews = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:8080/api/reviews/all', {
+            const response = await axios.get('BASE_URL', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setReviews(response.data);
