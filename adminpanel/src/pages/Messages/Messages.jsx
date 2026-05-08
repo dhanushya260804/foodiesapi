@@ -9,7 +9,7 @@ const Messages = () => {
     const fetchMessages = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:8080/api/messages', {
+            const response = await axios.get('BASE_URL', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setMessages(response.data);
@@ -26,7 +26,7 @@ const Messages = () => {
         if (!replyText[messageId]) return;
         try {
             const token = localStorage.getItem('token');
-            await axios.post(`http://localhost:8080/api/messages/${messageId}/reply`,
+            await axios.post(`BASE_URL ${messageId}/reply`,
                 { reply: replyText[messageId] },
                 { headers: { Authorization: `Bearer ${token}` } }
             );

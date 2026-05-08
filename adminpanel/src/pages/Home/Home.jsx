@@ -14,10 +14,10 @@ const Home = () => {
                 const token = localStorage.getItem('token');
                 const headers = { Authorization: `Bearer ${token}` };
 
-                const foodRes = await axios.get('http://localhost:8080/api/foods', { headers });
+                const foodRes = await axios.get('BASE_URL', { headers });
                 setTotalFoods(foodRes.data.length);
 
-                const orderRes = await axios.get('http://localhost:8080/api/orders/all', { headers });
+                const orderRes = await axios.get('BASE_URL', { headers });
                 setAllOrders(orderRes.data);
                 setFilteredOrders(orderRes.data);
             } catch (error) {
