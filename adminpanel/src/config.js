@@ -1,2 +1,2 @@
-const BASE_URL = "https://online-food-delivery-app-93pb.onrender.com";
+const BASE_URL = "https://foodiesapi-9rvr.onrender.com";
 export default BASE_URL;
