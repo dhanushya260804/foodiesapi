@@ -15,10 +15,10 @@ const Home = () => {
                 const token = localStorage.getItem('token');
                 const headers = { Authorization: `Bearer ${token}` };
 
-                const foodRes = await axios.get('${BASE_URL}/api/foods', { headers });
+                const foodRes = await axios.get(`${BASE_URL}/api/foods`, { headers });
                 setTotalFoods(foodRes.data.length);
 
-                const orderRes = await axios.get('${BASE_URL}/api/orders/all', { headers });
+                const orderRes = await axios.get(`${BASE_URL}/api/orders/all`, { headers });
                 setAllOrders(orderRes.data);
                 setFilteredOrders(orderRes.data);
             } catch (error) {
@@ -42,7 +42,9 @@ const Home = () => {
     }, [selectedDate, allOrders]);
 
     const totalOrders = filteredOrders.length;
-    const totalRevenue = filteredOrders.reduce((acc, order) => acc + order.amount, 0);
+    const totalRevenue = Array.isArray(filteredOrders)
+    ? filteredOrders.reduce((acc, order) => acc + (order.amount || 0), 0)
+    : 0;
 
     return (
         <div className="container mt-4">
