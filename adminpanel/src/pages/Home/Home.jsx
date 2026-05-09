@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react"
 import './Home.css';
+import BASE_URL from "../../config";
 
 const Home = () => {
     const [totalFoods, setTotalFoods] = useState(0);
@@ -14,10 +15,10 @@ const Home = () => {
                 const token = localStorage.getItem('token');
                 const headers = { Authorization: `Bearer ${token}` };
 
-                const foodRes = await axios.get('BASE_URL', { headers });
+                const foodRes = await axios.get('${BASE_URL}/api/foods', { headers });
                 setTotalFoods(foodRes.data.length);
 
-                const orderRes = await axios.get('BASE_URL', { headers });
+                const orderRes = await axios.get('${BASE_URL}/api/orders/all', { headers });
                 setAllOrders(orderRes.data);
                 setFilteredOrders(orderRes.data);
             } catch (error) {
