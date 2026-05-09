@@ -4,6 +4,9 @@ import BASE_URL from '../config';
 const API_URL = `${BASE_URL}/api/foods`;
 
 export const addFood = async (foodData, image) => {
+    console.log('Food data being sent:', foodData);
+    console.log('veg value:', foodData.veg, typeof foodData.veg);
+    
     const formData = new FormData();
     formData.append('food', JSON.stringify(foodData));
     formData.append('file', image);
