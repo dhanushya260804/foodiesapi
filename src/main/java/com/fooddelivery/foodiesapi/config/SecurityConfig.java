@@ -79,6 +79,7 @@ public class SecurityConfig {
                 "http://localhost:5174",
                 "https://online-food-delivery-app-beta.vercel.app",
                 "https://online-food-delivery-app-sqg1.vercel.app",
+                "https://online-food-delivery-app-sqg1-gdhx6ckpb.vercel.app",
                 "https://online-food-delivery-kxyd9vyve-dhanushya260804s-projects.vercel.app",
                 "https://online-food-delivery-app-sb2x.vercel.app"
         ));
