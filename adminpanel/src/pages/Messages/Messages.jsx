@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import BASE_URL from '../../config';
 
 const Messages = () => {
     const [messages, setMessages] = useState([]);
@@ -9,7 +10,7 @@ const Messages = () => {
     const fetchMessages = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`BASE_URL`, {
+            const response = await axios.get(`${BASE_URL}/api/messages`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setMessages(response.data);
@@ -26,7 +27,7 @@ const Messages = () => {
         if (!replyText[messageId]) return;
         try {
             const token = localStorage.getItem('token');
-            await axios.post(`BASE_URL ${messageId}/reply`,
+            await axios.post(`${BASE_URL}/api/messages/${messageId}/reply`,
                 { reply: replyText[messageId] },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
