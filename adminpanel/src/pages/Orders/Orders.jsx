@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { assets } from '../../assets/assets';
-import BASE_URL from '../../../../foodies/src/config';
+import BASE_URL from '../../config';
 
 const Orders = () => {
   const [data, setData] = useState([]);
