@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { toast } from 'react-toastify';
 import './Login.css';
+import BASE_URL from '../../config';
 
 const Login = ({ setToken }) => {
   const [data, setData] = useState({ email: '', password: '' });
@@ -9,14 +11,17 @@ const Login = ({ setToken }) => {
     setData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const onSubmitHandler = (e) => {
+  const onSubmitHandler = async (e) => {
     e.preventDefault();
-    if (data.email === "admin@foodies.com" && data.password === "admin123") {
-        localStorage.setItem('token', 'admin-token');
-        setToken('admin-token');
+    try {
+      const response = await axios.post(`${BASE_URL}/api/login`, data);
+      if (response.status === 200) {
+        localStorage.setItem('token', response.data.token);
+        setToken(response.data.token);
         toast.success('Login successful!');
-    } else {
-        toast.error('Invalid email or password')
+      }
+    } catch (error) {
+      toast.error('Invalid email or password');
     }
   };
 

@@ -17,7 +17,9 @@ const Orders = () => {
   const updateStatus = async (event, orderId) => {
     const token = localStorage.getItem("token");
     const response = await axios.patch(
-        `${BASE_URL}/api/orders/status/${orderId}?status=${event.target.value}`
+        `${BASE_URL}/api/orders/status/${orderId}?status=${event.target.value}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
     );
     if (response.status === 200) {
         await fetchOrders();
