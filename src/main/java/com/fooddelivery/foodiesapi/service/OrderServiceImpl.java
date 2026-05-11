@@ -1,9 +1,11 @@
 package com.fooddelivery.foodiesapi.service;
 
+import com.fooddelivery.foodiesapi.entity.DeliveryPartnerEntity;
 import com.fooddelivery.foodiesapi.entity.OrderEntity;
 import com.fooddelivery.foodiesapi.io.OrderRequest;
 import com.fooddelivery.foodiesapi.io.OrderResponse;
 import com.fooddelivery.foodiesapi.repository.CartRepository;
+import com.fooddelivery.foodiesapi.repository.DeliveryPartnerRepository;
 import com.fooddelivery.foodiesapi.repository.OrderRepository;
 import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
@@ -112,6 +114,22 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.save(entity);
     }
 
+    @Autowired
+    private DeliveryPartnerRepository deliveryPartnerRepository;
+
+    @Override
+    public void assignDeliveryPartner(String orderId, String partnerId) {
+        OrderEntity order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+        DeliveryPartnerEntity partner = deliveryPartnerRepository.findById(partnerId)
+                .orElseThrow(() -> new RuntimeException("Partner not found"));
+        order.setDeliveryPartnerId(partner.getId());
+        order.setDeliveryPartnerName(partner.getName());
+        order.setDeliveryPartnerPhone(partner.getPhoneNumber());
+        order.setDeliveryPartnerRating(partner.getRating());
+        orderRepository.save(order);
+    }
+
     private OrderResponse convertToResponse(OrderEntity newOrder) {
         return OrderResponse.builder()
                 .id(newOrder.getId())
@@ -125,6 +143,10 @@ public class OrderServiceImpl implements OrderService {
                 .phoneNumber(newOrder.getPhoneNumber())
                 .orderedItems(newOrder.getOrderedItems())
                 .createdAt(newOrder.getCreatedAt())
+                .deliveryPartnerId(newOrder.getDeliveryPartnerId())
+                .deliveryPartnerName(newOrder.getDeliveryPartnerName())
+                .deliveryPartnerPhone(newOrder.getDeliveryPartnerPhone())
+                .deliveryPartnerRating(newOrder.getDeliveryPartnerRating())
                 .build();
     }
 
@@ -139,4 +161,6 @@ public class OrderServiceImpl implements OrderService {
                 .createdAt(LocalDateTime.now())
                 .build();
     }
+
+
 }
