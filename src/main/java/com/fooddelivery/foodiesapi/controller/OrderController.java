@@ -52,4 +52,9 @@ public class OrderController {
     public void updateOrderStatus(@PathVariable String orderId, @RequestParam String status) {
         orderService.updateOrderStatus(orderId, status);
     }
+
+    @PatchMapping("/assign-partner/{orderId}")
+    public void assignDeliveryPartner(@PathVariable String orderId, @RequestBody Map<String, String> body) {
+        orderService.assignDeliveryPartner(orderId, body.get("partnerId"));
+    }
 }

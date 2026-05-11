@@ -21,4 +21,5 @@ public interface OrderService {
 
    void updateOrderStatus(String orderId, String status);
 
+    void assignDeliveryPartner(String orderId, String partnerId);
 }

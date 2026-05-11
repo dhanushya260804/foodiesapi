@@ -21,4 +21,8 @@ public class OrderResponse {
     private String orderStatus;
     private List<OrderItem> orderedItems;
     private LocalDateTime createdAt;
+    private String deliveryPartnerId;
+    private String deliveryPartnerName;
+    private String deliveryPartnerPhone;
+    private double deliveryPartnerRating;
 }

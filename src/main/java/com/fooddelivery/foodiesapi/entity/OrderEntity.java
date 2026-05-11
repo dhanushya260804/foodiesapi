@@ -27,4 +27,8 @@ public class OrderEntity {
     private String razorpayPaymentId;
     private String orderStatus;
     private LocalDateTime createdAt;
+    private String deliveryPartnerId;
+    private String deliveryPartnerName;
+    private String deliveryPartnerPhone;
+    private double deliveryPartnerRating;
 }
