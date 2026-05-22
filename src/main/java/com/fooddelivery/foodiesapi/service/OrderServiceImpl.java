@@ -13,7 +13,6 @@ import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -38,29 +37,33 @@ public class OrderServiceImpl implements OrderService {
     private static final double COD_CHARGE = 10.0;
     private static final int MAX_OTP_ATTEMPTS = 3;
 
-    @Autowired
-    private OrderRepository orderRepository;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private CartRepository cartRepository;
-
-    @Autowired
-    private DeliveryPartnerRepository deliveryPartnerRepository;
-
-    @Autowired
-    private NotificationService notificationService;
-
-    @Autowired
-    private UserRepository userRepository;
+    private final OrderRepository orderRepository;
+    private final UserService userService;
+    private final CartRepository cartRepository;
+    private final DeliveryPartnerRepository deliveryPartnerRepository;
+    private final NotificationService notificationService;
+    private final UserRepository userRepository;
 
     @Value("${razorpay_key}")
     private String RAZORPAY_KEY;
 
     @Value("${razorpay_secret}")
     private String RAZORPAY_SECRET;
+
+    // Constructor injection
+    public OrderServiceImpl(OrderRepository orderRepository,
+                            UserService userService,
+                            CartRepository cartRepository,
+                            DeliveryPartnerRepository deliveryPartnerRepository,
+                            NotificationService notificationService,
+                            UserRepository userRepository) {
+        this.orderRepository = orderRepository;
+        this.userService = userService;
+        this.cartRepository = cartRepository;
+        this.deliveryPartnerRepository = deliveryPartnerRepository;
+        this.notificationService = notificationService;
+        this.userRepository = userRepository;
+    }
 
     // ── Create Order with Wallet Support ──────────────────────────────────────────
 
