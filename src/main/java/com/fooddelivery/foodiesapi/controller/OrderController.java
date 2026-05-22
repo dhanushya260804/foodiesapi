@@ -21,8 +21,7 @@ public class OrderController {
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
     public OrderResponse createOrderWithPayment(@RequestBody OrderRequest request) throws RazorpayException {
-        OrderResponse response = orderService.createOrderWithPayment(request);
-        return response;
+        return orderService.createOrderWithPayment(request);
     }
 
     @PostMapping("/verify")
@@ -32,7 +31,7 @@ public class OrderController {
 
     @GetMapping
     public List<OrderResponse> getOrders() {
-        return  orderService.getUserOrders();
+        return orderService.getUserOrders();
     }
 
     @DeleteMapping("/{orderId}")
@@ -41,13 +40,11 @@ public class OrderController {
         orderService.removeOrder(orderId);
     }
 
-    //admin panel
     @GetMapping("/all")
     public List<OrderResponse> getOrdersOfAllUsers() {
         return orderService.getOrdersOfAllUsers();
     }
 
-    //admin panel
     @PatchMapping("/status/{orderId}")
     public void updateOrderStatus(@PathVariable String orderId, @RequestParam String status) {
         orderService.updateOrderStatus(orderId, status);
@@ -56,5 +53,39 @@ public class OrderController {
     @PatchMapping("/assign-partner/{orderId}")
     public void assignDeliveryPartner(@PathVariable String orderId, @RequestBody Map<String, String> body) {
         orderService.assignDeliveryPartner(orderId, body.get("partnerId"));
+    }
+
+    @GetMapping("/available")
+    public List<OrderResponse> getAvailableOrders() {
+        return orderService.getAvailableOrdersForPickup();
+    }
+
+    @PatchMapping("/pickup/{orderId}")
+    public OrderResponse pickupOrder(@PathVariable String orderId, @RequestBody Map<String, String> body) {
+        return orderService.pickupOrder(orderId, body.get("partnerEmail"));
+    }
+
+    @PatchMapping("/delivered/{orderId}")
+    public OrderResponse markDelivered(@PathVariable String orderId, @RequestBody Map<String, String> body) {
+        return orderService.markDelivered(orderId, body.get("partnerEmail"));
+    }
+
+    @GetMapping("/my-deliveries")
+    public List<OrderResponse> getPartnerDeliveries(@RequestParam String partnerEmail) {
+        return orderService.getPartnerDeliveries(partnerEmail);
+    }
+
+    // COD OTP verification
+    @PostMapping("/verify-otp/{orderId}")
+    public OrderResponse verifyCodOtp(
+            @PathVariable String orderId,
+            @RequestBody Map<String, String> body) {
+        return orderService.verifyCodOtp(orderId, body.get("otp"), body.get("partnerEmail"));
+    }
+
+    // Add to OrderController.java
+    @PatchMapping("/cancel/{orderId}")
+    public void cancelOrder(@PathVariable String orderId) {
+        orderService.cancelOrder(orderId);
     }
 }

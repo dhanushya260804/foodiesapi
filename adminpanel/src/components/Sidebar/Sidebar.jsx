@@ -21,6 +21,12 @@ const Sidebar = ({sidebarVisible}) => {
             <i className='bi bi-star me-2'></i>Reviews</Link>
             <Link className="list-group-item list-group-item-action list-group-item-light p-3" to="/messages">
             <i className='bi bi-envelope me-2'></i>Messages</Link>
+            <Link className="list-group-item list-group-item-action list-group-item-light p-3" to="/applications">
+            <i className='bi bi-person-check me-2'></i>Applications</Link>
+            <Link className="list-group-item list-group-item-action list-group-item-light p-3" to="/delivery-partners">
+            <i className='bi bi-scooter me-2'></i>Delivery Partners</Link>
+            <Link className="list-group-item list-group-item-action list-group-item-light p-3" to="/returns">
+            <i className='bi bi-arrow-return-left me-2'></i>Returns</Link>
         </div>
     </div>
   )

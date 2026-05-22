@@ -1,0 +1,243 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.ao-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f0faf5 0%, #e8f5ee 100%);
+  font-family: 'DM Sans', sans-serif;
+  padding: 0 0 48px;
+}
+
+.ao-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* Header */
+.ao-header {
+  background: linear-gradient(135deg, #2d6a4f, #1b4332);
+  color: white;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 -16px 24px;
+}
+
+.ao-logo { font-size: 1rem; font-weight: 500; opacity: 0.9; }
+.ao-title { font-size: 1.2rem; font-weight: 700; margin-top: 2px; }
+
+.ao-header-right {
+  display: flex;
+  gap: 8px;
+}
+
+.ao-refresh-btn {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: white;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s;
+}
+
+.ao-refresh-btn:hover { background: rgba(255,255,255,0.25); }
+
+.ao-logout-btn {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: white;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* Nav */
+.ao-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.ao-nav-link {
+  font-size: 0.88rem;
+  color: #2d6a4f;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.ao-badge {
+  background: #2d6a4f;
+  color: white;
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+/* Loading */
+.ao-loading {
+  text-align: center;
+  padding: 80px 0;
+  color: #2d6a4f;
+}
+
+.ao-loading-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+  animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+
+/* Empty */
+.ao-empty {
+  text-align: center;
+  padding: 80px 24px;
+  color: #6c757d;
+}
+
+.ao-empty-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+}
+
+.ao-empty h3 {
+  font-size: 1.1rem;
+  color: #2c1810;
+  margin-bottom: 8px;
+}
+
+.ao-empty p {
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+/* Order Cards */
+.ao-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ao-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  border: 1px solid #e9ecef;
+}
+
+.ao-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1.5px solid #f0f0f0;
+}
+
+.ao-order-id {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #6c757d;
+  letter-spacing: 1px;
+}
+
+.ao-amount {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #2d6a4f;
+}
+
+.ao-section-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #adb5bd;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  margin-top: 14px;
+}
+
+/* Items */
+.ao-items {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ao-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #2c1810;
+}
+
+.ao-item-name { font-weight: 500; }
+.ao-item-qty  { color: #6c757d; }
+
+/* Address */
+.ao-address {
+  display: flex;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: #2c1810;
+  line-height: 1.4;
+}
+
+/* Contact */
+.ao-contact {
+  font-size: 0.88rem;
+  color: #6c757d;
+  margin-top: 8px;
+}
+
+/* Time */
+.ao-time {
+  font-size: 0.82rem;
+  color: #adb5bd;
+  margin-top: 8px;
+}
+
+/* Pickup Button */
+.ao-pickup-btn {
+  width: 100%;
+  margin-top: 20px;
+  background: #2d6a4f;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.ao-pickup-btn:hover:not(:disabled) {
+  background: #1b4332;
+  transform: translateY(-1px);
+}
+
+.ao-pickup-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+  .ao-header { padding: 16px; }
+}

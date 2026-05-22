@@ -23,7 +23,9 @@ const FoodDisplay = ({category, searchText, vegFilter, priceRange}) => {
                       id={food.id}
                       imageURL={food.imageUrl}
                       price={food.price}
-                      veg={food.veg} />
+                      veg={food.veg} 
+                      quantityPerSet={food.quantityPerSet}
+                      unit={food.unit}/>
                ))
            ) : (
             <div className="text-center mt-4">
@@ -32,7 +34,7 @@ const FoodDisplay = ({category, searchText, vegFilter, priceRange}) => {
            )}
         </div>
     </div>
-  )
-}
+  );
+};
 
 export default FoodDisplay;

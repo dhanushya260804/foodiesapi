@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DeliveryPartnerRequest {
     private String name;
+    private String email;
+    private String password;
     private String phoneNumber;
-    private double rating;
-    private boolean available;
+    private String vehicleNumber;
+    private String licenseNumber;
 }

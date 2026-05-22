@@ -1,0 +1,309 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.status-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f0faf5 0%, #e8f5ee 100%);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 24px 16px 48px;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.loading-box {
+  text-align: center;
+  margin-top: 40vh;
+  color: #2d6a4f;
+}
+
+.loading-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+
+.status-card {
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 560px;
+  overflow: hidden;
+  margin-top: 16px;
+}
+
+/* Header */
+.status-header {
+  background: linear-gradient(135deg, #2d6a4f, #1b4332);
+  padding: 24px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+}
+
+.status-logo  { font-size: 1.1rem; font-weight: 500; }
+.status-title { font-size: 1.2rem; font-weight: 700; }
+
+.logout-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s;
+}
+
+.logout-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Status Banner */
+.status-banner {
+  margin: 24px 24px 0;
+  border-radius: 14px;
+  border: 1.5px solid;
+  padding: 20px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.status-pending  { background: #fffbeb; border-color: #fde68a; }
+.status-approved { background: #f0faf5; border-color: #b7dfc9; }
+.status-rejected { background: #fef2f2; border-color: #fecaca; }
+
+.status-icon { font-size: 2rem; flex-shrink: 0; }
+
+.status-banner-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin-bottom: 4px;
+}
+
+.status-pending  .status-banner-title { color: #b45309; }
+.status-approved .status-banner-title { color: #2d6a4f; }
+.status-rejected .status-banner-title { color: #dc2626; }
+
+.status-banner-msg {
+  font-size: 0.88rem;
+  color: #6c757d;
+  line-height: 1.5;
+}
+
+.rejection-reason {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: #dc2626;
+  background: #fff5f5;
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+/* Body */
+.status-body {
+  padding: 20px 24px 28px;
+}
+
+.section-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #2c1810;
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+  border-bottom: 1.5px solid #f0f0f0;
+}
+
+/* Details Grid */
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.detail-item {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+
+.detail-label {
+  font-size: 0.75rem;
+  color: #6c757d;
+  margin-bottom: 2px;
+}
+
+.detail-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2c1810;
+}
+
+/* Docs Grid */
+.docs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.doc-card {
+  background: #f0faf5;
+  border-radius: 10px;
+  padding: 12px;
+  border: 1px solid #b7dfc9;
+  text-align: center;
+}
+
+.doc-label {
+  font-size: 0.78rem;
+  color: #2d6a4f;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.doc-link {
+  font-size: 0.78rem;
+  color: #2d6a4f;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.doc-link:hover { text-decoration: underline; }
+
+.doc-empty {
+  font-size: 0.78rem;
+  color: #adb5bd;
+}
+
+/* Attempts */
+.attempts-box {
+  margin-top: 20px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 0.85rem;
+  color: #6c757d;
+}
+
+.attempts-left { color: #2d6a4f; font-weight: 500; }
+.attempts-none { color: #dc2626; font-weight: 500; }
+
+.reapply-btn {
+  display: block;
+  margin-top: 16px;
+  background: #2d6a4f;
+  color: white;
+  text-align: center;
+  padding: 13px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.reapply-btn:hover { background: #1b4332; }
+
+/* Approved Box */
+.approved-box {
+  margin-top: 16px;
+  background: #f0faf5;
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid #b7dfc9;
+}
+
+.approved-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 0.9rem;
+  color: #2c1810;
+  border-bottom: 1px solid #e0f0e8;
+}
+
+.approved-row:last-child { border-bottom: none; }
+
+.text-available   { color: #2d6a4f; }
+.text-unavailable { color: #dc2626; }
+
+@media (max-width: 480px) {
+  .details-grid { grid-template-columns: 1fr; }
+  .docs-grid    { grid-template-columns: 1fr 1fr; }
+  .status-header { flex-wrap: wrap; gap: 10px; }
+}
+
+/* Active Delivery Card */
+.active-delivery-card {
+  background: linear-gradient(135deg, #f0faf5, #e8f5ee);
+  border: 2px solid #2d6a4f;
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.active-delivery-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2d6a4f;
+  margin-bottom: 14px;
+}
+
+.active-delivery-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.active-delivery-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.88rem;
+  color: #2c1810;
+  padding: 6px 0;
+  border-bottom: 1px solid #d4eddf;
+}
+
+.active-delivery-row:last-child { border-bottom: none; }
+.active-delivery-row span { color: #6c757d; }
+
+.mark-delivered-btn {
+  width: 100%;
+  background: #2d6a4f;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 13px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s;
+}
+
+.mark-delivered-btn:hover:not(:disabled) { background: #1b4332; }
+.mark-delivered-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+
+.start-delivering-btn {
+  display: block;
+  width: 100%;
+  background: #2d6a4f;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 13px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: center;
+  margin-bottom: 20px;
+  transition: background 0.2s;
+}
+
+.start-delivering-btn:hover { background: #1b4332; }

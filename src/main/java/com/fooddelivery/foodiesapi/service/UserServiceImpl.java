@@ -29,12 +29,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public String findByUserId() {
         String loggedInUserEmail = authenticationFacade.getAuthentication().getName();
-
         Optional<UserEntity> userOptional = userRepository.findByEmail(loggedInUserEmail);
-        if (!userOptional.isPresent()) {
-            throw new UsernameNotFoundException("User not found");
-        }
-
+        if (!userOptional.isPresent()) throw new UsernameNotFoundException("User not found");
         return userOptional.get().getId();
     }
 
@@ -54,8 +50,7 @@ public class UserServiceImpl implements UserService {
         user.setName(request.getName());
         user.setPhoneNumber(request.getPhoneNumber());
         user.setAddress(request.getAddress());
-        user = userRepository.save(user);
-        return convertToResponse(user);
+        return convertToResponse(userRepository.save(user));
     }
 
     private UserEntity convertToEntity(UserRequest request) {
@@ -66,13 +61,14 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-    private UserResponse convertToResponse(UserEntity registeredUser) {
+    private UserResponse convertToResponse(UserEntity user) {
         return UserResponse.builder()
-                .id(registeredUser.getId())
-                .name(registeredUser.getName())
-                .email(registeredUser.getEmail())
-                .phoneNumber(registeredUser.getPhoneNumber())
-                .address(registeredUser.getAddress())
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .phoneNumber(user.getPhoneNumber())
+                .address(user.getAddress())
+                .walletBalance(user.getWalletBalance()) // ← added
                 .build();
     }
 }

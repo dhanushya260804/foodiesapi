@@ -7,12 +7,9 @@ import com.fooddelivery.foodiesapi.io.FoodResponse;
 import com.fooddelivery.foodiesapi.service.FoodService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.util.List;
 
 @RestController
@@ -25,21 +22,20 @@ public class FoodController {
 
     @PostMapping
     public FoodResponse addFood(@RequestPart("food") String foodString,
-                                @RequestPart("file")MultipartFile file) {
+                                @RequestPart("file") MultipartFile file) {
         ObjectMapper objectMapper = new ObjectMapper();
         FoodRequest request = null;
         try {
             request = objectMapper.readValue(foodString, FoodRequest.class);
-        }catch(JsonProcessingException ex) {
+        } catch (JsonProcessingException ex) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid JSON format");
         }
-        FoodResponse response = foodService.addFood(request, file);
-        return response;
+        return foodService.addFood(request, file);
     }
 
     @GetMapping
     public List<FoodResponse> readFoods() {
-       return foodService.readFoods();
+        return foodService.getAllFoods();
     }
 
     @GetMapping("/{id}")

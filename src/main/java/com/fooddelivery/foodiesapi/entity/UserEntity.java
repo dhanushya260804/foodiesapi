@@ -21,4 +21,5 @@ public class UserEntity {
     private String password;
     private String phoneNumber;
     private String address;
+    private double walletBalance;
 }

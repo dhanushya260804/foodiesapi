@@ -1,0 +1,136 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@700&Display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.ph-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f0faf5 0%, #e8f5ee 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+    font-family: 'DM Sans', sans-serif;
+}
+
+.ph-container {
+    width: 100%;
+    max-width: 700px;
+}
+
+.ph-header {
+    text-align: center;
+    margin-bottom: 48px;
+}
+
+.ph-logo {
+    font-size: 3.5rem;
+    margin-bottom: 16px;
+}
+
+.ph-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 5vw, 2.5rem);
+  font-weight: 700;
+  color: #1b4332;
+  margin-bottom: 8px;
+}
+ 
+.ph-subtitle {
+  font-size: 1rem;
+  color: #6c757d;
+  font-weight: 300;
+}
+ 
+.ph-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 48px;
+}
+ 
+.ph-card {
+  background: white;
+  border-radius: 20px;
+  padding: 32px 24px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  border: 2px solid transparent;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+ 
+.ph-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+}
+ 
+.ph-card-applicant { border-color: #b7dfc9; }
+.ph-card-partner   { border-color: #2d6a4f; background: linear-gradient(135deg, #f0faf5, #e8f5ee); }
+ 
+.ph-card-icon {
+  font-size: 2.5rem;
+  margin-bottom: 16px;
+}
+ 
+.ph-card-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1b4332;
+  margin-bottom: 10px;
+}
+ 
+.ph-card-desc {
+  font-size: 0.88rem;
+  color: #6c757d;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+ 
+.ph-card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+ 
+.ph-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+  border: none;
+}
+ 
+.ph-btn-primary {
+  background: #2d6a4f;
+  color: white;
+}
+ 
+.ph-btn-primary:hover { background: #1b4332; }
+ 
+.ph-btn-outline {
+  background: white;
+  color: #2d6a4f;
+  border: 1.5px solid #2d6a4f;
+}
+ 
+.ph-btn-outline:hover { background: #f0faf5; }
+ 
+.ph-btn-green {
+  background: #1b4332;
+  color: white;
+}
+ 
+.ph-btn-green:hover { background: #0f2d20; }
+ 
+.ph-footer {
+  text-align: center;
+  font-size: 0.78rem;
+  color: #adb5bd;
+  letter-spacing: 1px;
+}
+ 
+@media (max-width: 560px) {
+  .ph-cards { grid-template-columns: 1fr; }
+}

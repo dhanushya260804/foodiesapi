@@ -1,121 +1,149 @@
 package com.fooddelivery.foodiesapi.service;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import com.fooddelivery.foodiesapi.config.CloudinaryConfig;
 import com.fooddelivery.foodiesapi.entity.FoodEntity;
 import com.fooddelivery.foodiesapi.io.FoodRequest;
 import com.fooddelivery.foodiesapi.io.FoodResponse;
 import com.fooddelivery.foodiesapi.repository.FoodRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-import software.amazon.awssdk.core.sync.RequestBody;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class FoodServiceImpl implements FoodService {
 
-    @Autowired
-    private S3Client s3Client;
-    @Autowired
-    private FoodRepository foodRepository;
-
-    @Value("${aws.s3.bucketname}")
-    private String bucketName;
+    private final FoodRepository foodRepository;
+    private final CloudinaryConfig cloudinaryConfig;
+    private final Cloudinary cloudinary;
 
     @Override
-    public String uploadFile(MultipartFile file) {
-        String originalFilename = file.getOriginalFilename();
-        String filenameExtension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
-        String key = UUID.randomUUID().toString() + "." + filenameExtension;
-
+    public FoodResponse addFood(FoodRequest request, MultipartFile image) {
         try {
-            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(key)
-                    .acl("public-read")
-                    .contentType(file.getContentType())
-                    .build();
-
-            PutObjectResponse response = s3Client.putObject(putObjectRequest, RequestBody.fromBytes(file.getBytes()));
-
-            if (response.sdkHttpResponse().isSuccessful()) {
-                return "https://" + bucketName + ".s3.amazonaws.com/" + key;
-            } else {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "File upload failed");
-            }
-        } catch (IOException ex) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An error occurred while uploading the file");
+            String imageUrl = cloudinaryConfig.uploadFile(image);
+            FoodEntity entity = convertToEntity(request);
+            entity.setImageUrl(imageUrl);
+            FoodEntity saved = foodRepository.save(entity);
+            return convertToResponse(saved);
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Failed to upload image: " + e.getMessage());
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Failed to add food: " + e.getMessage());
         }
     }
 
     @Override
-    public FoodResponse addFood(FoodRequest request, MultipartFile file) {
-        FoodEntity newFoodEntity = convertToEntity(request);
-        String imageUrl = uploadFile(file);
-        newFoodEntity.setImageUrl(imageUrl);
-        newFoodEntity = foodRepository.save(newFoodEntity);
-        return convertToResponse(newFoodEntity);
-    }
-
-    @Override
-    public List<FoodResponse> readFoods() {
-        List<FoodEntity> databaseEntries = foodRepository.findAll();
-        List<FoodResponse> responses = new ArrayList<FoodResponse>();
-        for (FoodEntity entity : databaseEntries) {
+    public List<FoodResponse> getAllFoods() {
+        List<FoodEntity> entities = foodRepository.findAll();
+        List<FoodResponse> responses = new ArrayList<>();
+        for (FoodEntity entity : entities) {
             responses.add(convertToResponse(entity));
         }
         return responses;
     }
 
     @Override
-    public FoodResponse readFood(String id) {
-        Optional<FoodEntity> foodOptional = foodRepository.findById(id);
-        if (!foodOptional.isPresent()) {
-            throw new RuntimeException("Food not found for the id: " + id);
-        }
-        return convertToResponse(foodOptional.get());
+    public List<FoodResponse> readFoods() {
+        return getAllFoods();
     }
 
     @Override
-    public boolean deleteFile(String filename) {
-        DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
-                .bucket(bucketName)
-                .key(filename)
-                .build();
-        s3Client.deleteObject(deleteObjectRequest);
-        return true;
+    public FoodResponse getFoodById(String id) {
+        FoodEntity entity = foodRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Food not found"));
+        return convertToResponse(entity);
+    }
+
+    @Override
+    public FoodResponse readFood(String id) {
+        FoodEntity entity = foodRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Food not found with id: " + id));
+        return convertToResponse(entity);
+    }
+
+    @Override
+    public FoodResponse updateFood(String id, FoodRequest request, MultipartFile image) {
+        FoodEntity existing = foodRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Food not found"));
+
+        try {
+            String imageUrl = existing.getImageUrl();
+            if (image != null && !image.isEmpty()) {
+                imageUrl = cloudinaryConfig.uploadFile(image);
+            }
+
+            FoodEntity updated = convertToEntity(request);
+            updated.setId(id);
+            updated.setImageUrl(imageUrl);
+            FoodEntity saved = foodRepository.save(updated);
+            return convertToResponse(saved);
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Failed to upload image: " + e.getMessage());
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Failed to update food: " + e.getMessage());
+        }
     }
 
     @Override
     public void deleteFood(String id) {
-        FoodResponse response = readFood(id);
-        String imageUrl = response.getImageUrl();
-        String filename = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
-        boolean isFileDeleted = deleteFile(filename);
-        if (isFileDeleted) {
-            foodRepository.deleteById(response.getId());
+        if (!foodRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Food not found");
+        }
+        foodRepository.deleteById(id);
+    }
+
+    @Override
+    public List<FoodResponse> getFoodsByCategory(String category) {
+        List<FoodEntity> entities = foodRepository.findByCategory(category);
+        List<FoodResponse> responses = new ArrayList<>();
+        for (FoodEntity entity : entities) {
+            responses.add(convertToResponse(entity));
+        }
+        return responses;
+    }
+
+    @Override
+    public String uploadFile(MultipartFile file) {
+        try {
+            Map uploadResult = cloudinary.uploader().upload(
+                    file.getBytes(), ObjectUtils.asMap("folder", "foods"));
+            return (String) uploadResult.get("secure_url");
+        } catch (IOException ex) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "File upload failed");
         }
     }
 
-    private FoodEntity convertToEntity(FoodRequest request) {
-        return FoodEntity.builder()
-                .name(request.getName())
-                .description(request.getDescription())
-                .category(request.getCategory())
-                .price(request.getPrice())
-                .veg(request.isVeg())
-                .build();
+    @Override
+    public boolean deleteFile(String imageUrl) {
+        try {
+            cloudinary.uploader().destroy(extractPublicId(imageUrl), ObjectUtils.emptyMap());
+            return true;
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "File delete failed");
+        }
+    }
+
+    private String extractPublicId(String url) {
+        try {
+            String after = url.split("/upload/")[1].replaceFirst("v\\d+/", "");
+            int dot = after.lastIndexOf(".");
+            return dot != -1 ? after.substring(0, dot) : after;
+        } catch (Exception e) {
+            return url;
+        }
     }
 
     private FoodResponse convertToResponse(FoodEntity entity) {
@@ -123,10 +151,34 @@ public class FoodServiceImpl implements FoodService {
                 .id(entity.getId())
                 .name(entity.getName())
                 .description(entity.getDescription())
-                .category(entity.getCategory())
-                .price(entity.getPrice())
-                .veg(entity.isVeg())
                 .imageUrl(entity.getImageUrl())
+                .price(entity.getPrice())
+                .category(entity.getCategory())
+                .veg(entity.isVeg())
+                .quantityPerSet(entity.getQuantityPerSet())
+                .unit(entity.getUnit())
+                .addOnsEnabled(entity.isAddOnsEnabled())
+                .addOns(entity.getAddOns() != null ? entity.getAddOns() : new ArrayList<>())
+                .preferences(entity.getPreferences() != null ? entity.getPreferences() : new ArrayList<>())
+                .variants(entity.getVariants() != null ? entity.getVariants() : new ArrayList<>())
+                .variantRequired(entity.isVariantRequired())
+                .build();
+    }
+
+    private FoodEntity convertToEntity(FoodRequest request) {
+        return FoodEntity.builder()
+                .name(request.getName())
+                .description(request.getDescription())
+                .price(request.getPrice())
+                .category(request.getCategory())
+                .veg(request.isVeg())
+                .quantityPerSet(request.getQuantityPerSet())
+                .unit(request.getUnit())
+                .addOnsEnabled(request.isAddOnsEnabled())
+                .addOns(request.getAddOns() != null ? request.getAddOns() : new ArrayList<>())
+                .preferences(request.getPreferences() != null ? request.getPreferences() : new ArrayList<>())
+                .variants(request.getVariants() != null ? request.getVariants() : new ArrayList<>())
+                .variantRequired(request.isVariantRequired())
                 .build();
     }
 }
