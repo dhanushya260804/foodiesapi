@@ -70,20 +70,23 @@ const AddFood = () => {
   const removeVariant = (i) => setVariants(prev => prev.filter((_, idx) => idx !== i));
 
   const onSubmitHandler = async (e) => {
-    e.preventDefault();
-    if (!image) { toast.error('Please select an image.'); return; }
-    try {
-      await addFood({
-        ...data,
-        addOns: data.addOnsEnabled ? addOns : [],
-        preferences: data.addOnsEnabled ? preferences : [],
-        variants: data.addOnsEnabled ? variants : [],
-      }, image);
-      toast.success('Food added successfully!');
-      setData({ name: '', description: '', category: 'Biryani', price: '', veg: false, quantityPerSet: 1, unit: 'piece', addOnsEnabled: false, variantRequired: false });
-      setAddOns([]); setPreferences([]); setVariants([]); setImage(null);
-    } catch { toast.error('Error adding food.'); }
-  };
+  e.preventDefault();
+  if (!image) { toast.error('Please select an image.'); return; }
+  try {
+    // Convert price to number before sending
+    const foodData = {
+      ...data,
+      price: parseFloat(data.price),  // ← FIX: Convert string to number
+      addOns: data.addOnsEnabled ? addOns : [],
+      preferences: data.addOnsEnabled ? preferences : [],
+      variants: data.addOnsEnabled ? variants : [],
+    };
+    await addFood(foodData, image);
+    toast.success('Food added successfully!');
+    setData({ name: '', description: '', category: 'Biryani', price: '', veg: false, quantityPerSet: 1, unit: 'piece', addOnsEnabled: false, variantRequired: false });
+    setAddOns([]); setPreferences([]); setVariants([]); setImage(null);
+  } catch { toast.error('Error adding food.'); }
+};
 
   return (
     <div className="mx-2 mt-2">

@@ -23,14 +23,30 @@ public class FoodController {
     @PostMapping
     public FoodResponse addFood(@RequestPart("food") String foodString,
                                 @RequestPart("file") MultipartFile file) {
+        System.out.println("=== FOOD CONTROLLER ===");
+        System.out.println("Received foodString: " + foodString);
+        System.out.println("Received file: " + (file != null ? file.getOriginalFilename() : "null"));
+
         ObjectMapper objectMapper = new ObjectMapper();
         FoodRequest request = null;
         try {
             request = objectMapper.readValue(foodString, FoodRequest.class);
+            System.out.println("Parsed request successfully: " + request);
         } catch (JsonProcessingException ex) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid JSON format");
+            System.out.println("JSON parsing error: " + ex.getMessage());
+            ex.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid JSON format: " + ex.getMessage());
         }
-        return foodService.addFood(request, file);
+
+        try {
+            FoodResponse response = foodService.addFood(request, file);
+            System.out.println("Food saved successfully: " + response);
+            return response;
+        } catch (Exception e) {
+            System.out.println("Service error: " + e.getMessage());
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to add food: " + e.getMessage());
+        }
     }
 
     @GetMapping
