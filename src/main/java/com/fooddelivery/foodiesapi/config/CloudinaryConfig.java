@@ -2,6 +2,7 @@ package com.fooddelivery.foodiesapi.config;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,7 @@ import java.io.IOException;
 import java.util.Map;
 
 @Configuration
+@RequiredArgsConstructor
 public class CloudinaryConfig {
 
     @Value("${cloudinary.cloud_name}")
@@ -22,19 +24,24 @@ public class CloudinaryConfig {
     @Value("${cloudinary.api_secret}")
     private String apiSecret;
 
+    private Cloudinary cloudinary;
+
     @Bean
     public Cloudinary cloudinary() {
-        return new Cloudinary(ObjectUtils.asMap(
+        this.cloudinary = new Cloudinary(ObjectUtils.asMap(
                 "cloud_name", cloudName,
                 "api_key", apiKey,
                 "api_secret", apiSecret,
                 "secure", true
         ));
+        return this.cloudinary;
     }
 
     // Method to upload file to Cloudinary
     public String uploadFile(MultipartFile file) throws IOException {
-        Cloudinary cloudinary = cloudinary();
+        if (cloudinary == null) {
+            cloudinary();
+        }
         Map<?, ?> uploadResult = cloudinary.uploader().upload(
                 file.getBytes(),
                 ObjectUtils.asMap(
@@ -47,14 +54,9 @@ public class CloudinaryConfig {
 
     // Method to delete file from Cloudinary
     public void deleteFile(String publicId) throws IOException {
-        Cloudinary cloudinary = cloudinary();
+        if (cloudinary == null) {
+            cloudinary();
+        }
         cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
-    }
-
-    // Method to extract public ID from URL
-    public String getPublicIdFromUrl(String url) {
-        String[] parts = url.split("/");
-        String fileName = parts[parts.length - 1];
-        return fileName.split("\\.")[0];
     }
 }
