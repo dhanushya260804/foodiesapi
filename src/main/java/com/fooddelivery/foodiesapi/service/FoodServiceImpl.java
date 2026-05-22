@@ -28,16 +28,30 @@ public class FoodServiceImpl implements FoodService {
 
     @Override
     public FoodResponse addFood(FoodRequest request, MultipartFile image) {
+        System.out.println("=== ADDING FOOD ===");
+        System.out.println("Request: " + request);
+        System.out.println("Image: " + (image != null ? image.getOriginalFilename() : "NULL"));
         try {
-            String imageUrl = cloudinaryConfig.uploadFile(image);
+            String imageUrl = null;
+            if (image != null && !image.isEmpty()) {
+                System.out.println("Uploading image to Cloudinary...");
+                imageUrl = cloudinaryConfig.uploadFile(image);
+                System.out.println("Image URL: " + imageUrl);
+            } else {
+                System.out.println("No image provided");
+            }
+
             FoodEntity entity = convertToEntity(request);
             entity.setImageUrl(imageUrl);
+            System.out.println("Entity: " + entity);
+
             FoodEntity saved = foodRepository.save(entity);
+            System.out.println("Saved: " + saved.getId());
+
             return convertToResponse(saved);
-        } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Failed to upload image: " + e.getMessage());
         } catch (Exception e) {
+            System.out.println("ERROR: " + e.getMessage());
+            e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Failed to add food: " + e.getMessage());
         }
