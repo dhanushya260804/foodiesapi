@@ -75,9 +75,10 @@ public class SecurityConfig {
                 "http://localhost:5173",
                 "http://localhost:5174",
                 "http://localhost:5175",
-                "https://adminpanel-beryl-theta.vercel.app",  // ← your admin panel
-                "https://foodies-six-sigma.vercel.app",        // ← add your customer app URL
-                "https://partner-portal-eight-sage.vercel.app"       // ← add your partner portal URL
+                "https://adminpanel-beryl-theta.vercel.app",
+                "https://foodies-six-sigma.vercel.app",
+                "https://partner-portal-eight-sage.vercel.app",
+                "https://*.vercel.app"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
