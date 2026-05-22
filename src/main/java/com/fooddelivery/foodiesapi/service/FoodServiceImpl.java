@@ -28,32 +28,36 @@ public class FoodServiceImpl implements FoodService {
 
     @Override
     public FoodResponse addFood(FoodRequest request, MultipartFile image) {
-        System.out.println("=== ADDING FOOD ===");
+        System.out.println("=== FOOD ADD DEBUG ===");
         System.out.println("Request: " + request);
-        System.out.println("Image: " + (image != null ? image.getOriginalFilename() : "NULL"));
+        System.out.println("Image name: " + (image != null ? image.getOriginalFilename() : "null"));
+
         try {
             String imageUrl = null;
             if (image != null && !image.isEmpty()) {
-                System.out.println("Uploading image to Cloudinary...");
+                System.out.println("Uploading image...");
                 imageUrl = cloudinaryConfig.uploadFile(image);
                 System.out.println("Image URL: " + imageUrl);
             } else {
-                System.out.println("No image provided");
+                System.out.println("No image provided, using placeholder");
+                imageUrl = "https://via.placeholder.com/300x200";
             }
 
             FoodEntity entity = convertToEntity(request);
             entity.setImageUrl(imageUrl);
-            System.out.println("Entity: " + entity);
+            System.out.println("Entity to save: " + entity);
 
             FoodEntity saved = foodRepository.save(entity);
-            System.out.println("Saved: " + saved.getId());
+            System.out.println("Saved with ID: " + saved.getId());
 
             return convertToResponse(saved);
         } catch (Exception e) {
-            System.out.println("ERROR: " + e.getMessage());
+            System.out.println("=== ERROR ===");
+            System.out.println("Exception: " + e.getClass().getName());
+            System.out.println("Message: " + e.getMessage());
             e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Failed to add food: " + e.getMessage());
+                    "Failed to add food: " + e.getMessage(), e);
         }
     }
 
