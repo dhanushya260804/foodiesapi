@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import './Apply.css';
 
-const API = 'http://localhost:8080/api/delivery-partners';
+const API = 'https://foodies-api-whrh.onrender.com/api/delivery-partners';
 const STEPS = ['Personal Info', 'Vehicle Details', 'Upload Documents'];
 
 const Apply = () => {

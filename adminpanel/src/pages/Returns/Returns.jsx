@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-const API = 'http://localhost:8080/api/returns';
+const API = 'https://foodies-api-whrh.onrender.com/api/returns';
 const getHeaders = () => ({ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
 
 const STATUS_COLORS = {

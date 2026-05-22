@@ -72,12 +72,8 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(
-                "http://localhost:5173",
-                "http://localhost:5174",
-                "http://localhost:5175",
-                "https://*.vercel.app",
-                "https://adminpanel-roan-theta.vercel.app",
-                "https://foodies-app-self.vercel.app"
+                "*",  // Allow all for testing
+                "https://*.vercel.app"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));

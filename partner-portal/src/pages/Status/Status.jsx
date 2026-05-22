@@ -4,8 +4,8 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import './Status.css';
 
-const PARTNER_API = 'http://localhost:8080/api/delivery-partners';
-const ORDER_API   = 'http://localhost:8080/api/orders';
+const PARTNER_API = 'https://foodies-api-whrh.onrender.com/api/delivery-partners';
+const ORDER_API   = 'https://foodies-api-whrh.onrender.com/api/orders';
 
 const STATUS_CONFIG = {
   PENDING: {
