@@ -65,3 +65,8 @@ public class FoodController {
         foodService.deleteFood(id);
     }
 }
+
+@GetMapping("/public/test")
+public String test() {
+    return "Public endpoint works!";
+}

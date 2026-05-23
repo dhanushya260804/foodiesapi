@@ -44,6 +44,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/delivery-partners/my-status").permitAll()
                         .requestMatchers("/api/delivery-partners/**").authenticated()
                         .requestMatchers("/api/orders/available").permitAll()
+                        .requestMatchers("/public/test").permitAll()
                         .requestMatchers("/ws/**").permitAll()
                         .anyRequest().permitAll()
                 )
