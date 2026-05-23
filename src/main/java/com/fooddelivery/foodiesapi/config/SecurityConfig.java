@@ -38,7 +38,7 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()  // ← ADD THIS LINE FIRST
                         .requestMatchers("/api/delivery-partners/apply").permitAll()
                         .requestMatchers("/api/delivery-partners/login").permitAll()
                         .requestMatchers("/api/delivery-partners/my-status").permitAll()
