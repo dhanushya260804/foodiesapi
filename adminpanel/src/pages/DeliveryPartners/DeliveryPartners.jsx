@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-const API_BASE = 'https://foodies-api-whrh.onrender.com/api/delivery-partners';
+const API_BASE = 'https://foodies-api-dm0f.onrender.com/api/delivery-partners';
 
 const getAuthHeaders = () => ({
   headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }

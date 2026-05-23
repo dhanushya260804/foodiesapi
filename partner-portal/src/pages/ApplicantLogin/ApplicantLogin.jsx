@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
 import './ApplicantLogin.css';
 
-const API = 'https://foodies-api-whrh.onrender.com/api/delivery-partners';
+const API = 'https://foodies-api-dm0f.onrender.com/api/delivery-partners';
 
 const ApplicantLogin = ({ onLogin }) => {
     const navigate = useNavigate();
