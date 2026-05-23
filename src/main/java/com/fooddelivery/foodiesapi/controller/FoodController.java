@@ -66,7 +66,3 @@ public class FoodController {
     }
 }
 
-@GetMapping("/public/test")
-public String test() {
-    return "Public endpoint works!";
-}
