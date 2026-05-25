@@ -257,8 +257,11 @@ public class OrderServiceImpl implements OrderService {
         OrderEntity entity = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         entity.setOrderStatus(status);
-        if ("Delivered".equalsIgnoreCase(status) && entity.getDeliveryPartnerId() != null) {
-            freeUpPartner(entity.getDeliveryPartnerId());
+        if ("Delivered".equalsIgnoreCase(status)) {
+            entity.setDeliveredAt(LocalDateTime.now());  // ← ADD THIS
+            if (entity.getDeliveryPartnerId() != null) {
+                freeUpPartner(entity.getDeliveryPartnerId());
+            }
         }
         orderRepository.save(entity);
     }
