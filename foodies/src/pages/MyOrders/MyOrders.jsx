@@ -50,7 +50,7 @@ const MyOrders = () => {
     useEffect(() => {
         if (!token || !userId) return;
         const client = new Client({
-            brokerURL: 'wss://foodies-api-whrh.onrender.com/ws/websocket',
+            brokerURL: 'wss://foodies-api-dm0f.onrender.com/ws/websocket',
             reconnectDelay: 5000,
             onConnect: () => {
                 client.subscribe(`/topic/orders/${userId}`, (message) => {
