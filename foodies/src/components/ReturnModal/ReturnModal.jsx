@@ -15,7 +15,8 @@ const ReturnModal = ({ order, token, onClose, onSuccess }) => {
 
   useEffect(() => {
     if (!order.deliveredAt) return;
-    const delivered = new Date(order.deliveredAt);
+    const deliveredAtStr = order.deliveredAt.endsWith('Z') ? order.deliveredAt : order.deliveredAt + 'Z';
+    const delivered = new Date(deliveredAtStr);
     const expiry    = new Date(delivered.getTime() + 15 * 60 * 1000);
 
     const tick = () => {
@@ -80,14 +81,12 @@ const ReturnModal = ({ order, token, onClose, onSuccess }) => {
           </div>
 
           <div className="modal-body">
-            {/* Timer */}
             {timeLeft !== null && (
               <div className={`alert py-2 text-center mb-3 ${timeLeft < 60000 ? 'alert-danger' : 'alert-warning'}`}>
                 ⏱️ Return window closes in <strong>{formatTime(timeLeft)}</strong>
               </div>
             )}
 
-            {/* Reason */}
             <div className="mb-3">
               <label className="form-label fw-bold">Reason for Return</label>
               {REASONS.map(r => (
@@ -100,7 +99,6 @@ const ReturnModal = ({ order, token, onClose, onSuccess }) => {
               ))}
             </div>
 
-            {/* Photo */}
             <div className="mb-3">
               <label className="form-label fw-bold">Photo Proof <span className="text-danger">*</span></label>
               {preview && (
@@ -112,15 +110,11 @@ const ReturnModal = ({ order, token, onClose, onSuccess }) => {
               <small className="text-muted">Take a clear photo of the issue</small>
             </div>
 
-            {/* Refund method info */}
             <div className="alert alert-info py-2 small mb-3">
-              <strong>Refund method: </strong>
-              {order.paymentMethod === 'cod'
-                ? '💰 Store wallet credit (usable on next order)'
-                : '💳 Refund to original payment method via Razorpay'}
-            </div>
+    <strong>Refund method: </strong>
+    💰 Store wallet credit (usable on next order)
+</div>
 
-            {/* Re-order option */}
             <div className="form-check mb-2">
               <input className="form-check-input" type="checkbox" id="reorder"
                 checked={reorder} onChange={e => setReorder(e.target.checked)} />

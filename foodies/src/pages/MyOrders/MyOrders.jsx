@@ -289,9 +289,12 @@ const MyOrders = () => {
                                             {/* Return request */}
                                             {!returns[order.id] && isReturnWindowOpen(order) && (
                                                 <button className="btn btn-sm btn-outline-danger"
-                                                    onClick={() => setReturnOrder(order)}>
-                                                    🔄 Return Request
-                                                </button>
+    onClick={() => {
+        console.log("clicked, order:", order);
+        setReturnOrder(order);
+    }}>
+    🔄 Return Request
+</button>
                                             )}
 
                                             {/* Return status */}

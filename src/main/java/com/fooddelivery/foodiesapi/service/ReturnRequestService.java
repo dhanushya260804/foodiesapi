@@ -84,7 +84,7 @@ public class ReturnRequestService {
 
         String photoUrl = uploadPhoto(photo);
 
-        String refundMethod = "cod".equalsIgnoreCase(order.getPaymentMethod()) ? "WALLET" : "RAZORPAY";
+        String refundMethod = "WALLET";
 
         ReturnRequestEntity entity = ReturnRequestEntity.builder()
                 .orderId(orderId)
@@ -173,10 +173,16 @@ public class ReturnRequestService {
     }
 
     private void processWalletRefund(String userId, double amount) {
+        System.out.println("=== WALLET REFUND ===");
+        System.out.println("userId: " + userId);
+        System.out.println("amount: " + amount);
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        System.out.println("current balance: " + user.getWalletBalance());
         user.setWalletBalance(user.getWalletBalance() + amount);
+        System.out.println("new balance: " + user.getWalletBalance());
         userRepository.save(user);
+        System.out.println("saved!");
     }
 
     private void createReorder(OrderEntity original) {
