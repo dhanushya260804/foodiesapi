@@ -39,13 +39,17 @@ const MyOrders = () => {
     };
 
     const fetchReturnStatus = async (orderId) => {
-        try {
-            const res = await axios.get(`${BASE_URL}/api/returns/my/${orderId}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setReturns(prev => ({ ...prev, [orderId]: res.data }));
-        } catch { /* No return request yet */ }
-    };
+    try {
+        const res = await axios.get(`${BASE_URL}/api/returns/my/${orderId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        setReturns(prev => ({ ...prev, [orderId]: res.data }));
+    } catch (err) {
+        if (err.response?.status === 404) {
+            setReturns(prev => ({ ...prev, [orderId]: null }));
+        }
+    }
+};
 
     useEffect(() => {
         if (!token || !userId) return;
