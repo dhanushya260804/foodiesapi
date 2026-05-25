@@ -87,13 +87,14 @@ const MyOrders = () => {
     }, [token]);
 
     const isReturnWindowOpen = (order) => {
-    console.log("Order:", order.id, "deliveredAt:", order.deliveredAt, "status:", order.orderStatus);
     if (!order.deliveredAt) return false;
-    const delivered = new Date(order.deliveredAt);
+    // Add 'Z' to treat as UTC if not present
+    const deliveredAtStr = order.deliveredAt.endsWith('Z') 
+        ? order.deliveredAt 
+        : order.deliveredAt + 'Z';
+    const delivered = new Date(deliveredAtStr);
     const now = new Date();
-    const mins = (now - delivered) / 60000;
-    console.log("Minutes since delivery:", mins);
-    return mins <= 15;
+    return (now - delivered) / 60000 <= 15;
 };
 
     const getStatusColor = (status) => {
