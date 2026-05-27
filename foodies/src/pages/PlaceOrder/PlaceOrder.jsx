@@ -12,7 +12,7 @@ import BASE_URL from '../../config';
 const COD_CHARGE = 10;
 
 const PlaceOrder = () => {
-  const { foodList, quantities, setQuantities, token } = useContext(StoreContext);
+  const { foodList, quantities, setQuantities, token, cartCustomizations } = useContext(StoreContext); // added cartCustomizations
   const navigate = useNavigate();
   const [paymentMethod, setPaymentMethod] = useState('online');
   const [useWallet, setUseWallet] = useState(false);
@@ -45,7 +45,10 @@ const PlaceOrder = () => {
   };
 
   const cartItems = foodList.filter(food => quantities[food.id] > 0);
-  const { subtotal, shipping, tax, total } = calculateCartTotals(cartItems, quantities);
+  const { subtotal, shipping, tax, total } = calculateCartTotals(cartItems, quantities, cartCustomizations); // added cartCustomizations
+
+  console.log('cartCustomizations:', cartCustomizations);
+  console.log('cartItems:', cartItems);
 
   // Calculate final total with wallet deduction
   const codExtra = paymentMethod === 'cod' ? COD_CHARGE : 0;
@@ -73,7 +76,7 @@ const PlaceOrder = () => {
       orderedItems: cartItems.map(item => ({
         foodId: item.id,
         quantity: quantities[item.id],
-        price: item.price * quantities[item.id],
+        price: (item.price + (cartCustomizations[item.id]?.addOnsPrice || 0)) * quantities[item.id], // added cartCustomizations add-ons price
         category: item.category,
         imageUrl: item.imageUrl,
         description: item.description,
@@ -180,8 +183,8 @@ const PlaceOrder = () => {
                   <div>
                     <h6 className="my-0">{item.name}</h6>
                     <small className="text-muted">Qty: {quantities[item.id]}</small>
-                  </div>
-                  <span className="text-muted">₹{item.price * quantities[item.id]}</span>
+                  </div> 
+                  <span className="text-muted">₹{(item.price + (cartCustomizations[item.id]?.addOnsPrice || 0)) * quantities[item.id]}</span>
                 </li>
               ))}
               <li className="list-group-item d-flex justify-content-between">
